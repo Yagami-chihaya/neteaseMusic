@@ -1,7 +1,7 @@
 <template>
 <div class="musicPlayer" >
-  <div class="btn" @click="playMusic(33894312)">播放</div>
-  <audio ref="audio" autoplay controls>
+  <div class="btn" @click="playMusic()">播放</div>
+  <audio ref="audio" autoplay>
     <source :src="musicList[0]">
   </audio>
 </div>
@@ -11,8 +11,12 @@
 import { 
   defineComponent, 
   reactive, 
-  ref 
+  ref,
+  
 } from 'vue';
+import {
+  useStore
+} from 'vuex'
 import {get_data} from '../../network/request'
 
 
@@ -25,16 +29,15 @@ export default defineComponent({
   setup(){
     let musicList:any = ref([])
 
-    const playMusic = (id:number)=>{
-      get_data().get('/song/url',{params:{'id':id}}).then(res=>{
-        console.log(res.data);
+    let store = useStore()
+
+    const playMusic = ()=>{
+      get_data().get('/song/url',{params:{'id':store.state.current_play_music}}).then(res=>{
+
         musicList.value.push(res.data.data[0].url)
-        console.log(musicList.value);
-        console.log(audio);
+
         let url:string = musicList.value[0]
-        console.log('test');
-        console.log(musicList.value[0]);
-        
+
         let test = new Audio(url)
         test.play()
       })
