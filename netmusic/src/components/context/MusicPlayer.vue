@@ -1,8 +1,8 @@
 <template>
 <div class="musicPlayer" >
-  <div class="btn" @click="playMusic()">播放</div>
+  <div class="btn" @click="playMusic(store)">播放</div>
   <audio ref="audio" autoplay>
-    <source :src="musicList[0]">
+    <source :src="store.state.musicList[0]">
   </audio>
 </div>
 </template>
@@ -18,7 +18,7 @@ import {
   useStore
 } from 'vuex'
 import {get_data} from '../../network/request'
-
+import {playMusic} from '../../network/playMusic'
 
 export default defineComponent({
   name: '',
@@ -27,27 +27,29 @@ export default defineComponent({
   },
   
   setup(){
-    let musicList:any = ref([])
+    // let musicList:any = ref([])
 
     let store = useStore()
+    
+    // const playMusic = ()=>{
+    //   get_data().get('/song/url',{params:{'id':store.state.current_play_music}}).then(res=>{
 
-    const playMusic = ()=>{
-      get_data().get('/song/url',{params:{'id':store.state.current_play_music}}).then(res=>{
+    //     musicList.value.push(res.data.data[0].url)
 
-        musicList.value.push(res.data.data[0].url)
+    //     let url:string = musicList.value[0]
 
-        let url:string = musicList.value[0]
-
-        let test = new Audio(url)
-        test.play()
-      })
-    }
+    //     let test = new Audio(url)
+    //     test.play()
+    //   })
+    // }
     let audio = ref<HTMLAudioElement|null>(null)
 
+    console.log(playMusic);
+    
     return {
-      playMusic,
+      store,
       audio,
-      musicList,
+      playMusic,
       
     }
   },

@@ -5,11 +5,15 @@
     <el-carousel-item v-for="(item,index) in cover_data" :key="index">
       <div class="cover_box">
         <img :src="item.pic">
-        <img class="backboard" :src="item.pic">
+        
       </div>
+      <img class="backboard" :src="item.pic">
       
     </el-carousel-item>
-    <img class="download" src="../../../assets/img/download.png">
+    <div class="download">
+      <img src="../../../assets/img/download.png">
+    </div>
+    
   </el-carousel>
   
  
@@ -81,16 +85,22 @@
                 </div>
                 <div class="info">
                   <p>飙升榜</p>
-                  <img class="btn" src="../../../assets/img/播放.png">
-                  <img class="btn" src="../../../assets/img/文件夹.png">
+                  <img class="btn" src="../../../assets/img/播放2.png">
+                  <img class="btn" src="../../../assets/img/文件夹2.png">
                 </div>
               </div>
               <ol class="musicList">
                
                 <li v-for="(item,index) in top_data[0]" :key="index">
                   <span>{{index+1}}</span>
-
-                  {{item.name}}
+                  <p class="name">{{item.name}}</p>
+                  
+                  <div class="btnList">
+                    <img class="btn" @click="play(item.id)" src="../../../assets/img/播放2.png">
+                    <img class="btn" src="../../../assets/img/添加.png">
+                    <img class="btn" src="../../../assets/img/文件夹2.png">
+                  </div>
+                  
                 </li>
                 <li class="check_all">查看全部></li>
               </ol>
@@ -103,15 +113,21 @@
                 </div>
                 <div class="info">
                   <p>新歌榜</p>
-                  <img class="btn" src="../../../assets/img/播放.png">
-                  <img class="btn" src="../../../assets/img/文件夹.png">
+                  <img class="btn" src="../../../assets/img/播放2.png">
+                  <img class="btn" src="../../../assets/img/文件夹2.png">
                 </div>
               </div>
               <ol class="musicList">
                 <li v-for="(item,index) in top_data[1]" :key="index">
                   <span>{{index+1}}</span>
 
-                  {{item.name}}
+                  <p class="name">{{item.name}}</p>
+                  
+                  <div class="btnList">
+                    <img class="btn" @click="play(item.id)" src="../../../assets/img/播放2.png">
+                    <img class="btn" @click="after_play(item.id)" src="../../../assets/img/添加.png">
+                    <img class="btn" src="../../../assets/img/文件夹2.png">
+                  </div>
                 </li>
                 <li class="check_all">查看全部></li>
               </ol>
@@ -124,8 +140,8 @@
                 </div>
                 <div class="info">
                   <p>原创榜</p>
-                  <img class="btn" src="../../../assets/img/播放.png">
-                  <img class="btn" src="../../../assets/img/文件夹.png">
+                  <img class="btn" src="../../../assets/img/播放2.png">
+                  <img class="btn" src="../../../assets/img/文件夹2.png">
                 </div>
                 
                 
@@ -134,7 +150,13 @@
                 <li v-for="(item,index) in top_data[2]" :key="index">
                   <span>{{index+1}}</span>
 
-                  {{item.name}}
+                 <p class="name">{{item.name}}</p>
+                  
+                  <div class="btnList">
+                    <img class="btn" @click="play(item.id)" src="../../../assets/img/播放2.png">
+                    <img class="btn" src="../../../assets/img/添加.png">
+                    <img class="btn" src="../../../assets/img/文件夹2.png">
+                  </div>
                 </li>
                 <li class="check_all">查看全部></li>
               </ol>
@@ -188,8 +210,9 @@ import {
   ref ,
   onMounted,
 } from 'vue';
+import {useStore} from 'vuex'
 import {get_data} from '../../../network/request'
-
+import {playMusic,afterPlay} from '../../../network/playMusic'
 
 export default defineComponent({
   name: '',
@@ -307,8 +330,17 @@ export default defineComponent({
       
     })
     
+    let store = useStore();
     
+    let play = (id:number)=>{
+      store.state.current_play_music=id
+      playMusic(store)
+    }
 
+    let after_play = (id:number)=>{
+      store.state.current_play_music = id
+      afterPlay(store)
+    }
 
     return {
       
@@ -322,6 +354,10 @@ export default defineComponent({
       next,
       top_data,
       singer_data,
+      store,
+      playMusic,
+      play,
+      after_play,
     }
   },
   
@@ -345,34 +381,42 @@ export default defineComponent({
     
     .cover_box{
       
-      
-      width: 100%;
+      position:absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 69.6rem;
       height: 100%;
       display: flex;
-      justify-content: center;
+      background: red;
       img{
         width: 52rem;
-        transform:translateX(-124px) ;
+        
       }
-      .backboard{
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 100%;
-        z-index: -1;
-        filter: blur(10px);
-      }
+      
     }
-    
+    .backboard{
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      z-index: -1;
+      filter: blur(10px);
+    }
     
   }
   
   .download{
     position: relative;
-    left: calc(50% + 26rem - 124px);
-    
+    left: 50%;
+    transform: translateX(-50%);
+    width:69.6rem;
+    z-index: 0;
+    text-align: right;
     height: 20rem;
+    img{
+      height: 100%;
+    }
   }
 
   .left{
@@ -662,17 +706,17 @@ export default defineComponent({
               }
               .info{
                 p{
-                font-weight: bold;
-                width: 80px;
-                height: 20px;
-                padding: 10px;
-                font-size: 14px;
-              }
-                .btn{
-                  width: 20px;
+                  font-weight: bold;
+                  width: 80px;
                   height: 20px;
-                  padding-left:10px;
+                  padding: 10px;
+                  font-size: 14px;
                 }
+                .btn{
+                  padding-left:10px;
+                  
+                }
+
               }
               
             }
@@ -685,8 +729,9 @@ export default defineComponent({
                 list-style: none;
                 height: 32px;
                 line-height: 32px;
-                font-size: 12px;
-               
+                
+                position:relative;
+                
                 &:nth-child(2n-1){
                   background: rgb(226, 226, 226);
                 }
@@ -698,11 +743,47 @@ export default defineComponent({
                   font-size: 16px;
                   padding-right: 8px;
                 }
+                &:nth-child(n)>.name{
+                  font-size: 12px;
+                  color: black;
+                  width:90px;
+                  height: 100%;
+                  overflow: hidden;
+                  position: absolute;
+                  left: 50px;
+                  top: 0;
+                }
+                .btnList{
+                  position: absolute;
+                  top:0;
+                  right:0;
+                  width:100px;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  height: 100%;
+                  
+                  z-index: 1;
+                  .btn{
+                    padding-right: 5px;
+                  }
+                }
+               
               }
               .check_all{
                 text-align: right;
               }
 
+            }
+            .btn{
+              width: 20px;
+              height: 20px;
+              opacity: .6;
+              cursor: pointer;
+              &:hover{
+                transition: .3s;
+                opacity: 1;
+              }
             }
           }
         }
@@ -717,6 +798,7 @@ export default defineComponent({
     .loginBox{
       height: 126px;
       background: url('../../../assets/img/index.png') 0 0 no-repeat;
+      background-size: 50rem;
       &>p{
         color:#666;
         width: 84%;
@@ -766,7 +848,7 @@ export default defineComponent({
       .singer_list{
         
         .item{
-          width: 210px;
+        
           height: 62px;
           background: #fafafa;
           display: flex;
@@ -790,7 +872,7 @@ export default defineComponent({
 
         }
         .join{
-          width: 210px;
+         
           height: 31px;
           line-height: 31px;
           text-align: center;
@@ -809,19 +891,22 @@ export default defineComponent({
       }
     }
     .dj{
+      
+      margin: 0 20px;
       margin-top: 30px;
       height: 300px;
       
       img{
-        margin: 0 50%;
-        transform: translateX(-50%);
+        
+        width:100%;
+
       }
     }
   }
 
   .bottom{
     img{
-      
+      width: 99vw;
       margin-left: 50%;
       transform: translateX(-50%);
     }

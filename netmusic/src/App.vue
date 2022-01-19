@@ -2,7 +2,7 @@
   <div id="nav" @mousewheel="scrollMove">
     <navbar></navbar>
     <router-view/>
-    <back-top v-show="back_top_show"></back-top>
+    <back-top @click="back_top_show=false" v-show="back_top_show"></back-top>
     <music-player></music-player>
   </div>
   
