@@ -37,7 +37,7 @@
               <div class="info">
                 <img src="../../../assets/img/耳机.png">
                 <span>{{ (item.playCount/10000).toFixed(2)}}万</span>
-                <img class="play" src="../../../assets/img/播放.png">
+                <img class="play" @click="hot_recommend_play(item.id)" src="../../../assets/img/播放.png">
               </div>
               
             </div>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="info">
                   <p>飙升榜</p>
-                  <img class="btn" src="../../../assets/img/播放2.png">
+                  <img class="btn" @click="top_play(top_data[2])" src="../../../assets/img/播放2.png">
                   <img class="btn" src="../../../assets/img/文件夹2.png">
                 </div>
               </div>
@@ -96,8 +96,8 @@
                   <p class="name">{{item.name}}</p>
                   
                   <div class="btnList">
-                    <img class="btn" @click="play(item.id)" src="../../../assets/img/播放2.png">
-                    <img class="btn" src="../../../assets/img/添加.png">
+                    <img class="btn" @click="play(item)" src="../../../assets/img/播放2.png">
+                    <img class="btn" @click="after_play(item)" src="../../../assets/img/添加.png">
                     <img class="btn" src="../../../assets/img/文件夹2.png">
                   </div>
                   
@@ -113,7 +113,7 @@
                 </div>
                 <div class="info">
                   <p>新歌榜</p>
-                  <img class="btn" src="../../../assets/img/播放2.png">
+                  <img class="btn" @click="top_play(top_data[2])" src="../../../assets/img/播放2.png">
                   <img class="btn" src="../../../assets/img/文件夹2.png">
                 </div>
               </div>
@@ -124,8 +124,8 @@
                   <p class="name">{{item.name}}</p>
                   
                   <div class="btnList">
-                    <img class="btn" @click="play(item.id)" src="../../../assets/img/播放2.png">
-                    <img class="btn" @click="after_play(item.id)" src="../../../assets/img/添加.png">
+                    <img class="btn" @click="play(item)" src="../../../assets/img/播放2.png">
+                    <img class="btn" @click="after_play(item)" src="../../../assets/img/添加.png">
                     <img class="btn" src="../../../assets/img/文件夹2.png">
                   </div>
                 </li>
@@ -140,7 +140,7 @@
                 </div>
                 <div class="info">
                   <p>原创榜</p>
-                  <img class="btn" src="../../../assets/img/播放2.png">
+                  <img class="btn" @click="top_play(top_data[2])" src="../../../assets/img/播放2.png">
                   <img class="btn" src="../../../assets/img/文件夹2.png">
                 </div>
                 
@@ -153,8 +153,8 @@
                  <p class="name">{{item.name}}</p>
                   
                   <div class="btnList">
-                    <img class="btn" @click="play(item.id)" src="../../../assets/img/播放2.png">
-                    <img class="btn" src="../../../assets/img/添加.png">
+                    <img class="btn" @click="play(item)" src="../../../assets/img/播放2.png">
+                    <img class="btn" @click="after_play(item)" src="../../../assets/img/添加.png">
                     <img class="btn" src="../../../assets/img/文件夹2.png">
                   </div>
                 </li>
@@ -325,21 +325,55 @@ export default defineComponent({
     get_data().get('/top/artists',{params:{'limit':5}}).then(res=>{
       
       singer_data.value = res.data.artists
-      console.log(singer_data.value);
+
       
       
     })
     
     let store = useStore();
     
-    let play = (id:number)=>{
-      store.state.current_play_music=id
+    let play = (item:any)=>{
+      
+      
+      store.state.current_play_music=item.id
+      store.state.name_list.unshift(item.name)
+      store.state.artist_list.unshift(item.ar[0].name)
+      console.log(store.state.name_list);
+      
+      playMusic(store,true)
+    }
+
+    let after_play = (item:any)=>{
+      store.state.current_play_music=item.id
+      store.state.name_list.push(item.name)
+      store.state.artist_list.push(item.ar[0].name)
+      console.log(store.state.name_list);
+      afterPlay(store)
+    }
+
+    let top_play = (data:any)=>{
+      store.state.musicList = [] //清空播放列表
+      store.state.name_list = []
+      store.state.artist_list = []
+      for(let item of data){
+        after_play(item)
+      }
+      
       playMusic(store)
     }
 
-    let after_play = (id:number)=>{
-      store.state.current_play_music = id
-      afterPlay(store)
+    let hot_recommend_play = (id:number)=>{  //播放热门歌单
+      store.state.musicList = [] //清空播放列表
+      store.state.name_list = []
+      store.state.artist_list = []
+      get_data().get('/playlist/track/all',{params:{id}}).then(res=>{
+        for(let item of res.data.songs){
+          after_play(item)
+        } 
+        playMusic(store)
+      })
+      console.log(store.state.musicList);
+      
     }
 
     return {
@@ -358,6 +392,8 @@ export default defineComponent({
       playMusic,
       play,
       after_play,
+      top_play,
+      hot_recommend_play,
     }
   },
   
