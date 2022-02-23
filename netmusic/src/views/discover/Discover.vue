@@ -79,7 +79,7 @@ export default defineComponent({
         display: flex;
         justify-content:flex-start;
         align-items: center;
-        margin-left: 30%;
+        margin-left: 26%;
         
         li{
           margin: 0 1rem;

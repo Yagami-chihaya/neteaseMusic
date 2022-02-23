@@ -2,11 +2,12 @@
 <div class="navbar">
   <a class="logo"><img src="../../assets/img/logo.png"></a>
   <ul class="btn_list">
-    <li v-for="(item,index) in btn_list" :key="index" :class="{active:currentIndex==index}" @click='btn_click(index)'>{{item.name}}</li>
+    
+    <li v-for="(item,index) in btn_list" :key="index" :class="{active:currentIndex==index}" @click='btn_click(index)'><a :href="item.url">{{item.name}}</a></li>
   </ul>
   <el-input v-model='input_text'  placeholder='音乐/视频/电台/用户' :prefix-icon='Search'></el-input>
   <div class="creater_center">创作者中心</div>
-  <div class="login">登录</div>
+  <div class="login" @click="store.state.isShowLoginBox=true">登录</div>
   
 </div>
 </template>
@@ -20,7 +21,7 @@ import {
 } from 'vue';
 import {useRouter} from 'vue-router'
 import {Search} from '@element-plus/icons-vue'
-
+import {useStore} from 'vuex'
 
 export default defineComponent({
   name: '',
@@ -45,11 +46,11 @@ export default defineComponent({
       },
       {
         name:'商城',
-        
+        url:'https://music.163.com/store/product'
       },
       {
         name:'音乐人',
-        
+        url:'https://music.163.com/st/musician'
       },
       {
         name:'下载客户端',
@@ -72,6 +73,7 @@ export default defineComponent({
       
     }
 
+    const store = useStore()
   
 
     return {
@@ -80,6 +82,7 @@ export default defineComponent({
       currentIndex,
       btn_click,
       Search,
+      store,
     }
   },
   
@@ -112,10 +115,23 @@ export default defineComponent({
         align-items: center;
         list-style: none;
         color: #ccc;
-        padding: 0 1.5rem;
+        
         cursor: pointer;
+        a{
+          padding: 0 1.5rem;
+          width: 100%;
+          height: 5rem;
+          line-height: 5rem;
+          text-decoration: none;
+          &:visited{
+            color: #ccc;
+          }
+          
+        }
         &:hover{
-          color: white;
+          a{
+            color: white;
+          }
           background: black;
           transition: .4s;
         }

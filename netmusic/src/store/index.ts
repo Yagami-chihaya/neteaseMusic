@@ -8,6 +8,8 @@ export default createStore({
     current_music_max_time:0,
     name_list:[],
     artist_list:[],
+    cover_list:[],
+    isShowLoginBox:false,       //显示登录界面
   },
   mutations: {
 

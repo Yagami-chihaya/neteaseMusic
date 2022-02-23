@@ -19,17 +19,7 @@
  
     <div class="left">
       <div class="hot_recommend">
-        <div class="top">
-          <p><img src="../../../assets/img/circle1.png">热门推荐</p>
-          <span>华语</span>
-          <span>流行</span>
-          <span>摇滚</span>
-          <span>民谣</span>
-          <span>电子</span>
-          <span class="more">更多</span>
-        </div>
-        <div class="content">
-          
+        <content-box title="热门推荐" :titleImg="require('../../../assets/img/circle1.png')" :otherTitle="['华语','流行','摇滚','民谣','电子']" rightText="更多">
           <div class="item" v-for="(item,index) in hot_recommend" :key="index">
             <div class="cover">
               <img class="coverImg" :src="item.picUrl">
@@ -43,39 +33,34 @@
             </div>
             <p class="title">{{item.name}}</p>
           </div>
-          
-        </div>
-
+        </content-box>
       </div>
       <div class="new_DVD">
-        <div class="top">
-          <p><img src="../../../assets/img/circle1.png">新碟上架</p>
-          <span class="more">更多</span>
-        </div>
-        <div class="content">
-          <div class="showBox">
-            <div class="dvdBox" id="dvdBox">
-              <div class="item" v-for="(item,index) in new_DVD_data" :key="index">
-                <div class="cover">
-                  <img class="img" :src="item.blurPicUrl">
-                  <img class="backboard" src="../../../assets/img/coverall.png">
+        <content-box title='新碟上架' :titleImg="require('../../../assets/img/circle1.png')" rightText="更多">
+          <div class="content">
+            <div class="showBox">
+              <div class="dvdBox" id="dvdBox">
+                <div class="item" v-for="(item,index) in new_DVD_data" :key="index">
+                  <div class="cover">
+                    <img class="img" :src="item.blurPicUrl">
+                    <img class="backboard" src="../../../assets/img/coverall.png">
+                  </div>
+                  
+                  <p class="name">{{item.name}}</p>
+                  <p class="artist">{{item.artist.name}}</p>
                 </div>
-                
-                <p class="name">{{item.name}}</p>
-                <p class="artist">{{item.artist.name}}</p>
               </div>
             </div>
-          </div>
           <img class="prev" @click="prev" src="../../../assets/img/左箭头.png">
           <img class="next" @click="next" src="../../../assets/img/左箭头.png">
         </div>
+        </content-box>
+        
+        
       </div>
       <div class="topList">
-        <div class="top">
-          <p><img src="../../../assets/img/circle1.png">榜单</p>
-          <span class="more">更多</span>
-        </div>
-        <div class="content">
+        <content-box title="榜单" :titleImg="require('../../../assets/img/circle1.png')" rightText="更多">
+          <div class="content">
           <ul>
             <li>
               <div class="title">
@@ -85,7 +70,7 @@
                 </div>
                 <div class="info">
                   <p>飙升榜</p>
-                  <img class="btn" @click="top_play(top_data[2])" src="../../../assets/img/播放2.png">
+                  <img class="btn" @click="top_play(top_data[0])" src="../../../assets/img/播放2.png">
                   <img class="btn" src="../../../assets/img/文件夹2.png">
                 </div>
               </div>
@@ -113,7 +98,7 @@
                 </div>
                 <div class="info">
                   <p>新歌榜</p>
-                  <img class="btn" @click="top_play(top_data[2])" src="../../../assets/img/播放2.png">
+                  <img class="btn" @click="top_play(top_data[1])" src="../../../assets/img/播放2.png">
                   <img class="btn" src="../../../assets/img/文件夹2.png">
                 </div>
               </div>
@@ -164,13 +149,16 @@
 
           </ul>
         </div>
+        </content-box>
+
+        
       </div>
     </div>
 
     <div class="right">
       <div class="loginBox">
         <p>登录网易云音乐，可以享受无限收藏的乐趣，并且无限同步到手机</p>
-        <div class="login_btn">
+        <div class="login_btn" @click="store.state.isShowLoginBox=true">
           用户登录
         </div>
       </div>
@@ -186,9 +174,9 @@
               <p class="name">{{item.name}}</p>
             </div>
           </div>
-          <div class="join">
+          <a class="join" href="https://music.163.com/st/musician">
             申请成为网易音乐人
-          </div>
+          </a>
         </div>
       </div>
       <div class="dj">
@@ -200,6 +188,7 @@
       <img src="../../../assets/img/bottom.png">
     </div>
 
+    
 </div>
 </template>
 
@@ -213,10 +202,14 @@ import {
 import {useStore} from 'vuex'
 import {get_data} from '../../../network/request'
 import {playMusic,afterPlay} from '../../../network/playMusic'
+import contentBox from '../../../components/context/ContentBox.vue'
+
+
+
 
 export default defineComponent({
   name: '',
-  components:{  },
+  components:{ contentBox },
   props: {
   },
   
@@ -337,6 +330,7 @@ export default defineComponent({
       
       store.state.current_play_music=item.id
       store.state.name_list.unshift(item.name)
+      store.state.cover_list.unshift(item.al.picUrl)
       store.state.artist_list.unshift(item.ar[0].name)
       console.log(store.state.name_list);
       
@@ -346,6 +340,7 @@ export default defineComponent({
     let after_play = (item:any)=>{
       store.state.current_play_music=item.id
       store.state.name_list.push(item.name)
+      store.state.cover_list.push(item.al.picUrl)
       store.state.artist_list.push(item.ar[0].name)
       console.log(store.state.name_list);
       afterPlay(store)
@@ -354,6 +349,7 @@ export default defineComponent({
     let top_play = (data:any)=>{
       store.state.musicList = [] //清空播放列表
       store.state.name_list = []
+      store.state.cover_list = []
       store.state.artist_list = []
       for(let item of data){
         after_play(item)
@@ -365,6 +361,7 @@ export default defineComponent({
     let hot_recommend_play = (id:number)=>{  //播放热门歌单
       store.state.musicList = [] //清空播放列表
       store.state.name_list = []
+      store.state.cover_list = []
       store.state.artist_list = []
       get_data().get('/playlist/track/all',{params:{id}}).then(res=>{
         for(let item of res.data.songs){
@@ -394,6 +391,7 @@ export default defineComponent({
       after_play,
       top_play,
       hot_recommend_play,
+
     }
   },
   
@@ -463,49 +461,9 @@ export default defineComponent({
     .hot_recommend{
       height: 40rem;
      
-      .top{
-        width: 96%;
-        margin: 0 2%;
-        height: 3rem;
-      
-        display: flex;
-        justify-content: flex-start;
-        align-items:flex-end;
-        flex-wrap: nowrap;
-        position: relative;
-        padding-bottom: 6px;
-        border-bottom: 2px solid #C10D0C;
-        p{
-          font-size: 20px;
-          font-weight: 500;
-      
-          img{
-            margin: 0 1rem;
-          }
-        }
-        span{
-          padding: 0 1rem;
-          color: #666;
-          border-right: 1px solid #ccc;
-          font-size: 12px;
-        }
-        span:nth-last-child(2){
-          border: none;
-        }
-        .more{
-          position: absolute;
-          right: 0;
-          border: none;
-        }
 
-      }
       .content{
-        margin-top: 2rem;
-        width: 98%;
-        padding: 0 1%;
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
+
         
         .item{
           width: 140px;
@@ -565,34 +523,7 @@ export default defineComponent({
     }
     .new_DVD{
       padding-bottom: 3rem;
-      .top{
-        width: 96%;
-        margin: 0 2%;
-        height: 3rem;
-        
-        display: flex;
-        justify-content: flex-start;
-        align-items:flex-end;
-        flex-wrap: nowrap;
-        position: relative;
-        padding-bottom: 6px;
-        border-bottom: 2px solid #C10D0C;
-        p{
-          font-size: 20px;
-          font-weight: 500;
       
-          img{
-            margin: 0 1rem;
-          }
-        }
-        .more{
-          padding: 0 1rem;
-          color: #666;
-          font-size: 12px;
-          position: absolute;
-          right: 0;
-        }
-      }
       .content{
         width: 96%;
         margin: 1rem 2%;
@@ -667,34 +598,7 @@ export default defineComponent({
     }
     .topList{
       padding-bottom: 3rem;
-      .top{
-        width: 96%;
-        margin: 0 2%;
-        height: 3rem;
-        
-        display: flex;
-        justify-content: flex-start;
-        align-items:flex-end;
-        flex-wrap: nowrap;
-        position: relative;
-        padding-bottom: 6px;
-        border-bottom: 2px solid #C10D0C;
-        p{
-          font-size: 20px;
-          font-weight: 500;
       
-          img{
-            margin: 0 1rem;
-          }
-        }
-        .more{
-          padding: 0 1rem;
-          color: #666;
-          font-size: 12px;
-          position: absolute;
-          right: 0;
-        }
-      }
       .content{
         width: 96%;
         margin: 1rem 2%;
@@ -908,7 +812,7 @@ export default defineComponent({
 
         }
         .join{
-         
+          display: block;
           height: 31px;
           line-height: 31px;
           text-align: center;
@@ -918,10 +822,14 @@ export default defineComponent({
           border-radius: 5px;
           border: 1px solid #e9e9e9;
           background: #e9e9e9;
+          text-decoration: none;
           cursor: pointer;
           &:hover{
             transition: .2s;
             background: white;
+          }
+          &:visited{
+            color: black;
           }
         }
       }

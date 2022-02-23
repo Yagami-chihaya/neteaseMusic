@@ -6,7 +6,7 @@
     <div class="btn next" @click="next"></div>
   </div>
   <div class="cover">
-    <img src="../../assets/img/default_album.jpg">
+    <img :src="store.state.cover_list.length===0?require('../../assets/img/default_album.jpg'):store.state.cover_list[0]">
   </div>
 
   <div class="play">
@@ -68,6 +68,7 @@ export default defineComponent({
     let next = ()=>{
       store.state.musicList.splice(0, 1)
       store.state.name_list.splice(0, 1)
+      store.state.cover_list.splice(0, 1)
       store.state.artist_list.splice(0, 1)
       playMusic(store)
     }
