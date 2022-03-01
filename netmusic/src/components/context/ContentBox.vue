@@ -2,7 +2,7 @@
   <div class="contentBox">
     <div class="top">
       
-      <p><img :src="titleImg">{{title}}</p>
+      <p><img :src="titleImg" v-if="titleImg!=''">{{title}}</p>
       <span v-for="item in otherTitle" :key="item">{{item}}</span>
       <span class="more">{{rightText}}</span>
     </div>
@@ -62,7 +62,7 @@ export default defineComponent({
   p{
     font-size: 20px;
     font-weight: 500;
-
+    
     img {
       margin: 0 1rem;
     }

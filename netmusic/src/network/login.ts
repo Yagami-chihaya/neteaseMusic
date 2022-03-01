@@ -22,17 +22,41 @@ export function get_captcha(phone:Number){
   })
 }
 
-export function login(phone:Number,captcha:Number|undefined,password:String|undefined){
+let check_login = (store:any)=>{
+  get_data().get('/login/status',{params:{'cookie':localStorage.getItem('cookie')}}).then(res=>{
+    console.log(res.data);
+    
+    if(res.data.data.account!=null){
+      console.log('not null');
+      
+      
+      store.state.isLogin = true
+      store.state.user_info = res.data.data
+      store.state.current_account = res.data.data.account
+      store.state.current_profile = res.data.data.profile
+    }else{
+      
+      console.log('null');
+      store.state.isLogin = false
+    }
+  })
+}
+
+export function login(phone:Number,captcha:Number|undefined,password:String|undefined,store:any){
   if(captcha){
     get_data().get('/login/cellphone',{params:{
       'phone':phone,
       'captcha':captcha
     }}).then(res=>{
+      store.state.cookie = res.data.cookie
       console.log(res.data);
       ElMessage({
         message: '登录成功',
         type: 'success',
       })
+      
+      check_login(store)
+      location.reload()
     }).catch(err=>{
       console.log(err);
       ElMessage({
@@ -45,11 +69,18 @@ export function login(phone:Number,captcha:Number|undefined,password:String|unde
       'phone':phone,
       'password':password
     }}).then(res=>{
+      localStorage.setItem('cookie',res.data.cookie)
+
+      store.state.cookie = res.data.cookie
+      
       console.log(res.data);
+      
       ElMessage({
         message: '登录成功',
         type: 'success',
       })
+      check_login(store)
+      location.reload()
     }).catch(err=>{
       console.log(err);
       ElMessage({

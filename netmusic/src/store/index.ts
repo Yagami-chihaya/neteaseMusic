@@ -6,10 +6,21 @@ export default createStore({
     musicList:[],
     current_music_now_time:0,
     current_music_max_time:0,
+    
     name_list:[],
     artist_list:[],
     cover_list:[],
     isShowLoginBox:false,       //显示登录界面
+    isPlaying:false,
+    isLogin:false,
+    user_info:{
+      code:0,
+      account:{},
+      profile:{},
+    },
+    current_account:{},
+    current_profile:{},
+    cookie:'',
   },
   mutations: {
 

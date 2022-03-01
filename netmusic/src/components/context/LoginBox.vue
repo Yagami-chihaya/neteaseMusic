@@ -135,7 +135,8 @@ export default defineComponent({
     let captcha = ref()
 
     let login2 = ()=>{
-      login(phone.value,captcha.value,password.value)
+      login(phone.value,captcha.value,password.value,store)
+      
       store.state.isShowLoginBox = false;
     }
 
@@ -171,7 +172,7 @@ export default defineComponent({
   background: white;
   overflow: hidden;
   box-shadow: 0 5px 16px black;
-  z-index: 2;
+  z-index: 10;
   .navbar {
     border-bottom: 1px solid #191919;
     background: #2d2d2d;

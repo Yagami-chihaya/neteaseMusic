@@ -10,8 +10,9 @@
       <img class="backboard" :src="item.pic">
       
     </el-carousel-item>
-    <div class="download">
+    <div class="download" >
       <img src="../../../assets/img/download.png">
+      <div class="download_btn" @click="to('download')"></div>
     </div>
     
   </el-carousel>
@@ -27,6 +28,23 @@
               <div class="info">
                 <img src="../../../assets/img/耳机.png">
                 <span>{{ (item.playCount/10000).toFixed(2)}}万</span>
+                <img class="play" @click="hot_recommend_play(item.id)" src="../../../assets/img/播放.png">
+              </div>
+              
+            </div>
+            <p class="title">{{item.name}}</p>
+          </div>
+        </content-box>
+      </div>
+      <div class="person_recommend" v-if="store.state.isLogin">
+        <content-box title="个性化推荐" :titleImg="require('../../../assets/img/circle1.png')" rightText="更多">
+          <div class="item" v-for="(item,index) in person_recommend.slice(0,4)" :key="index">
+            <div class="cover">
+              <img class="coverImg" :src="item.picUrl">
+              <img class="filter" src="../../../assets/img/coverall.png">
+              <div class="info">
+                <img src="../../../assets/img/耳机.png">
+                <span>{{ (item.playcount/10000).toFixed(2)}}万</span>
                 <img class="play" @click="hot_recommend_play(item.id)" src="../../../assets/img/播放.png">
               </div>
               
@@ -156,10 +174,35 @@
     </div>
 
     <div class="right">
-      <div class="loginBox">
+      <div class="loginBox" v-if="!store.state.isLogin">
         <p>登录网易云音乐，可以享受无限收藏的乐趣，并且无限同步到手机</p>
         <div class="login_btn" @click="store.state.isShowLoginBox=true">
           用户登录
+        </div>
+      </div>
+      <div class="user_box" v-else>
+        <div class="avatar">
+          <img :src="user_info.avatarUrl" alt="">
+        </div>
+        <div class="info">
+          <p class="name">{{user_info.nickname}}</p>
+          <div class="level">{{level}}<span></span></div>
+          <div class="sign" @click="sign" v-if="!isSign">签到<span></span></div>
+          <div class="sign signed" v-if="isSign">已签到<span></span></div>
+        </div>
+        <div class="info2">
+          <div class="item">
+            <strong>{{user_info.cCount}}</strong>
+            <p>动态</p>
+          </div>
+          <div class="item">
+            <strong>{{user_info.follows}}</strong>
+            <p>关注</p>
+          </div>
+          <div class="item">
+            <strong>{{user_info.sCount}}</strong>
+            <p>粉丝</p>
+          </div>
         </div>
       </div>
       <div class="singer">
@@ -203,8 +246,8 @@ import {useStore} from 'vuex'
 import {get_data} from '../../../network/request'
 import {playMusic,afterPlay} from '../../../network/playMusic'
 import contentBox from '../../../components/context/ContentBox.vue'
-
-
+import {useRouter} from 'vue-router'
+import {ElMessage} from 'element-plus'
 
 
 export default defineComponent({
@@ -214,9 +257,10 @@ export default defineComponent({
   },
   
   setup(){
-    
+    let store = useStore();
     //获取顶部轮播图封面数据
     let cover_data = ref();
+    let cookie = store.state.isLogin?localStorage.getItem('cookie'):''
 
     get_data().get('/homepage/block/page').then(res=>{
       console.log(res.data.data.blocks[0].extInfo.banners);
@@ -232,11 +276,18 @@ export default defineComponent({
     //获取热门推荐数据
     let hot_recommend = ref();
 
-    get_data().get('/personalized',{params:{'limit':8}}).then(res=>{
+    get_data().get('/personalized',{params:{'limit':8,'cookie':cookie}}).then(res=>{
       console.log(res.data.result);
       hot_recommend.value = res.data.result
       console.log(hot_recommend.value);
       
+    })
+
+    let person_recommend = ref([]);
+    get_data().get('/recommend/resource',{params:{'cookie':localStorage.getItem('cookie')}}).then(res=>{
+      
+      console.log(res.data);
+      person_recommend.value = res.data.recommend
     })
 
     //获取最新碟片的数据
@@ -323,7 +374,7 @@ export default defineComponent({
       
     })
     
-    let store = useStore();
+    
     
     let play = (item:any)=>{
       
@@ -373,10 +424,51 @@ export default defineComponent({
       
     }
 
+    const router = useRouter()
+
+    const to = (url:string)=>{
+      router.push(url)
+    }
+
+    let user_info = ref({})
+    let level = ref()
+    let isSign = ref()
+    get_data().get('/user/account',{params:{'cookie':localStorage.getItem('cookie')}}).then(res=>{
+      console.log(res.data);
+      console.log('user');
+      get_data().get('/user/detail',{params:{'uid':res.data.account.id}}).then(res=>{
+        console.log(res.data);
+        user_info.value = res.data.profile
+        level.value = res.data.level
+        isSign.value = res.data.mobileSign||res.data.pcSign
+      })
+      
+    })
+
+    
+    let sign = ()=>{
+      get_data().get('/daily_signin',{params:{'cookie':localStorage.getItem('cookie')}}).then(res=>{
+        console.log(res.data);
+        if(res.data.code==200){
+          ElMessage({
+            message: '签到成功',
+            type: 'success',
+          })
+        }
+        
+        isSign.value = true
+      }).catch(err=>{
+        ElMessage({
+
+        })
+      })
+    }
+
     return {
       
       cover_data,
       hot_recommend,
+      person_recommend,
       new_DVD_data,
       move,
       left,
@@ -391,7 +483,11 @@ export default defineComponent({
       after_play,
       top_play,
       hot_recommend_play,
-
+      to,
+      user_info,
+      level,
+      sign,
+      isSign,
     }
   },
   
@@ -441,15 +537,31 @@ export default defineComponent({
   }
   
   .download{
-    position: relative;
+    position: absolute;
     left: 50%;
     transform: translateX(-50%);
     width:69.6rem;
     z-index: 0;
     text-align: right;
     height: 20rem;
+    
     img{
       height: 100%;
+      
+    }
+    .download_btn{
+      width: 242px;
+      
+      height: 64px;
+      opacity: 0;
+      position: absolute;
+      bottom: 49px;
+      right: 19px;
+      background: black;
+      cursor: pointer;
+      &:hover{
+        opacity: .1;
+      }
     }
   }
 
@@ -460,6 +572,69 @@ export default defineComponent({
     width: 52rem;
     .hot_recommend{
       height: 40rem;
+     
+
+      .content{
+
+        
+        .item{
+          width: 140px;
+          height: 234px;
+          margin-right: 30px;
+          .cover{
+            width: 100%;
+            height: 140px;
+            overflow: hidden;
+            position: relative;
+            .coverImg{
+              width: 100%;
+              z-index: -1;
+            }
+            .info{
+              position: absolute;
+              bottom: 0;
+              width: 100%;
+              height: 27px;
+              display: flex;
+              align-items: center;
+              background: rgba(0, 0, 0, 0.5);
+              img{
+                width: 14px;
+                padding: 0 10px;
+              }
+              span{
+                color: #ccc;
+                font-size: 12px;
+              }
+              .play{
+                position: absolute;
+                right: 0;
+                width: 18px;
+                opacity: .6;
+                cursor: pointer;
+                &:hover{
+                  transition: .3s;
+                  opacity: 1;
+                }
+              }
+              
+            }
+            .filter{
+              position: absolute;
+              top: 0;
+              left: 0;
+              
+            }
+          }
+          .title{
+            padding: .5rem 0;
+            line-height: 20px;
+          }
+        }
+      }
+    }
+    .person_recommend{
+      height: 20rem;
      
 
       .content{
@@ -765,7 +940,109 @@ export default defineComponent({
       }
 
     }
-
+    .user_box{
+      background: #f7f7f7;
+      height: 165px;
+      padding-top: 20px;
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      .avatar{
+      
+        width: 80px;
+        height: 80px;
+        margin-left: 20px;
+      
+        padding: 2px;
+        background: #fff;
+        border: 1px solid #dadada;
+        img{
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .info{
+        width: 115px;
+        margin-left: 18px;
+        padding-top: 3px;
+        .name{
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          word-wrap: normal;
+          color: #333;
+          font-weight: bold;
+        }
+        .level{
+          display: inline-block;
+          margin-top: 5px;
+          height: 17px;
+          overflow: hidden;
+          font-size: 12px;
+          padding-left: 25px;
+          line-height: 18px;
+          color: #999;
+          font-weight: bold;
+          font-style: italic;
+          background: url('https://s2.music.126.net/style/web2/img/icon2.png?ba5260f473e0a6782a35560906b46add') -130px -64px no-repeat;
+          span{
+            display: inline-block;
+            float: right;
+            width: 8px;
+            height: 17px;
+            background: url('https://s2.music.126.net/style/web2/img/icon2.png?ba5260f473e0a6782a35560906b46add') -130px -64px no-repeat;
+            background-position: -192px -64px;
+          }
+        }
+        .sign{
+          margin-top: 10px;
+          color: #fff;
+          background: url('https://s2.music.126.net/style/web2/img/button2.png?08a64dd484a6d5ed99f74327a19b069c') 0 0 no-repeat;
+          background-position: 0 -387px;
+          height: 31px;
+          line-height: 31px;
+          
+          text-align: center;
+          cursor: pointer;
+          span{
+            display: inline-block;
+            float: right;
+            width: 5px;
+            height: 31px;
+            background: url('https://s2.music.126.net/style/web2/img/button2.png?08a64dd484a6d5ed99f74327a19b069c') right -428px no-repeat;
+          }
+        }
+        .signed{
+          color: #bebebe;
+          background-position: 0 -305px;
+          cursor:default;
+          span{
+            background-position: right -346px;
+          }
+        }
+      }
+      .info2{
+        margin: 0px 0 0 3px;
+        color: #666;
+        .item{
+          float: left;
+          height: 40px;
+          padding: 0 18px;
+          border-right: 1px solid #e4e4e4;
+          &:last-child{
+            border: none;
+          }
+          strong{
+            font-size: 20px;
+            font-weight: normal;
+          }
+          p{
+            margin-left: 2px;
+          }
+        }
+      }
+    }
     .singer{
       height: 455px;
       margin-top: 15px;
