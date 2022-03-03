@@ -243,37 +243,19 @@ export default defineComponent({
         name:'我要做主播'
       }
 
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+
     ]
     let active_category = ref()
     let change_category = (index:Number)=>{
       active_category.value = index
     }
     let recommend_program = ref()
-    get_data().get('/program/recommend').then(res=>{
+    get_data().get('/program/recommend',{params:{'limit':10}}).then(res=>{
       console.log(res.data);
       recommend_program.value = res.data.programs
     })
     let top_program = ref([])
-    get_data().get('/dj/program/toplist').then(res=>{
+    get_data().get('/dj/program/toplist',{params:{'limit':10}}).then(res=>{
       console.log(res.data);
       top_program.value = res.data.toplist
     })
@@ -283,30 +265,37 @@ export default defineComponent({
       get_data().get('/dj/program',{params:{
         'rid':id
       }}).then(res=>{
+        console.log('radio_info');
+        
         console.log(res.data);
         radio_play(res.data.programs)
       })
     }
     let after_play = (item:any)=>{
+      console.log(item);
       
       store.state.name_list.push(item.mainSong.name)
       store.state.cover_list.push(item.mainSong.album.picUrl)
       store.state.artist_list.push(item.mainSong.artists[0].name)
-      console.log(store.state.name_list);
-      afterPlay(store,item.id)
+
+      return afterPlay(store,item.mainSong.id)
     }
     let radio_play = (data:any)=>{
       
       
       store.state.musicList = [] //清空播放列表
+      store.state.current_index = 0  //重置歌单播放进度
       store.state.name_list = []
       store.state.cover_list = []
       store.state.artist_list = []
+
+      
+      
       for(let item of data){
         after_play(item)
       }
-      
-      playMusic(store,false,store.state.musicList[0])
+
+      playMusic(store,false,store.state.musicList[0].id)
     }  
     let radio_recommend = ref({})
     radio_recommend.value= {djRadios:[]}  //防止使用slice导致报错

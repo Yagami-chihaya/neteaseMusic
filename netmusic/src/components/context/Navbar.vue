@@ -5,8 +5,8 @@
     
     <li v-for="(item,index) in btn_list" :key="index" :class="{active:currentIndex==index}" @click='btn_click(index)'><a :href="item.url">{{item.name}}</a></li>
   </ul>
-  <el-input v-model='input_text'  placeholder='音乐/视频/电台/用户' :prefix-icon='Search'></el-input>
-  <div class="creater_center" @click="store.state.isShowLoginBox=true">创作者中心</div>
+  <el-input v-model='store.state.input_text'  placeholder='音乐/视频/电台/用户' :prefix-icon='Search' @change="to('search_page')"></el-input>
+  <div class="creater_center" @click="store.state.isLogin?to2('https://music.163.com/#/creatorcenter?module=creatorcenter'):store.state.isShowLoginBox=true">创作者中心</div>
   <div class="login" @click="store.state.isShowLoginBox=true" v-if="!store.state.isLogin">登录</div>
   <div class="avatar" v-else>
     
@@ -76,12 +76,16 @@ export default defineComponent({
       },
     ];
     const router = useRouter();
-    let input_text = ref('');
+   
     let currentIndex = ref(0);
 
     const to = (url:string)=>{
       router.push(url)
     }
+    const to2 = (url:string)=>{
+      window.location.href = url
+    }
+    
     const btn_click = (index:number)=>{
 
       
@@ -111,12 +115,13 @@ export default defineComponent({
 
     return {
       btn_list,
-      input_text,
+  
       currentIndex,
       btn_click,
       Search,
       store,
       to,
+      to2,
       isShowUserBox,
       logout,
       router,

@@ -1,19 +1,19 @@
 <template>
 <div class="musicPlayer" @mouseenter="isDown=false" @mouseleave="isDown=true" :class="{down:isDown&&!isOpen}">
   <div class="leftMenu">
-    <div class="btn prev"></div>
+    <div class="btn prev" @click="prev"></div>
     <div class="btn play" @click="go_on_music(store)" v-if="!store.state.isPlaying"></div>
     <div class="btn stop" @click="stopMusic(store)" v-else></div>
     <div class="btn next" @click="next"></div>
   </div>
   <div class="cover">
-    <img :src="store.state.cover_list.length===0?require('../../assets/img/default_album.jpg'):store.state.cover_list[0]">
+    <img :src="store.state.cover_list.length===0?require('../../assets/img/default_album.jpg'):store.state.cover_list[store.state.current_index]">
   </div>
 
   <div class="play">
     <div class="info">
-      <span class="name">{{store.state.name_list[0]}}</span>
-      <span class="artist">{{store.state.artist_list[0]}}</span>
+      <span class="name">{{store.state.name_list[store.state.current_index]}}</span>
+      <span class="artist">{{store.state.artist_list[store.state.current_index]}}</span>
       <div></div>
     </div>
     <div class="scrollbar">
@@ -60,21 +60,10 @@ export default defineComponent({
   },
   
   setup(){
-    // let musicList:any = ref([])
 
     let store = useStore()
     
-    // const playMusic = ()=>{
-    //   get_data().get('/song/url',{params:{'id':store.state.current_play_music}}).then(res=>{
 
-    //     musicList.value.push(res.data.data[0].url)
-
-    //     let url:string = musicList.value[0]
-
-    //     let test = new Audio(url)
-    //     test.play()
-    //   })
-    // }
     let audio = ref<HTMLAudioElement|null>(null)
 
     let change = ()=>{
@@ -84,10 +73,13 @@ export default defineComponent({
     console.log(playMusic);
     
     let next = ()=>{
-      store.state.musicList.splice(0, 1)
-      store.state.name_list.splice(0, 1)
-      store.state.cover_list.splice(0, 1)
-      store.state.artist_list.splice(0, 1)
+      
+      store.state.current_index++
+      playMusic(store,false,store.state.musicList[0])
+    }
+
+    let prev = ()=>{
+      store.state.current_index--
       playMusic(store,false,store.state.musicList[0])
     }
 
@@ -108,6 +100,7 @@ export default defineComponent({
       playMusic,
       change,
       next,
+      prev,
       stopMusic,
       changeVoice,
       go_on_music,

@@ -49,6 +49,11 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
+    path:'/search_page',
+    name:'SearchPage',
+    component:()=>import('../views/search_page/SearchPage.vue')
+  },
+  {
     path:'/mine_music',
     name:'Mine_music',
     component:()=>import('../views/mine_music/Mine_music.vue')

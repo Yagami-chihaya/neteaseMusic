@@ -4,7 +4,7 @@ import { get_data } from './request'
 
 let audio = new Audio()
 
-let playList = []
+
 
 let getMusic = (id:number) => {
   return get_data().get('/song/url', { params: { 'id': id } })
@@ -28,30 +28,35 @@ let auto_increment_nowTime = (store:any)=>{
 
 export function playMusic(store: any,isSingle=false,id:number) {  //需手动传入store对象，ts文件无法单独使用vuex的api  isSingle判断是否单独播放歌曲
   
+  // if(store.state.current_index==store.state.musicList.length-1){
+  //   return 0
+  // }
+
+
   audio.load()
+  
+  if(isSingle){
+    store.state.current_index = 0
+    store.state.musicList.unshift(id)
+    store.state.current_play_music = store.state.musicList[store.state.current_index]
+    
+    
+  }else {
+    store.state.musicList.push(id)
+    store.state.current_play_music= store.state.musicList[store.state.current_index]
+  }
 
-  getMusic(id).then(res => {             //这段代码意思是先将要播放的歌曲url推进数组当中，播放数组最后一个元素并删除。然后判断数组长度是否大于0，若大于则从数组中第一个元素开始播放并删除。直到队列清空
+  getMusic(store.state.current_play_music).then(res => {             //这段代码意思是先将要播放的歌曲url推进数组当中，播放数组最后一个元素并删除。然后判断数组长度是否大于0，若大于则从数组中第一个元素开始播放并删除。直到队列清空
     
+    console.log(res.data.data[0]);
     
+    let url: string = res.data.data[0].url
     
-    store.state.musicList.push(res.data.data[0].url)
-
-    
-    let url: string
-    if(isSingle){
-      url = store.state.musicList[store.state.musicList.length-1]
-      
-    }else {
-      url= store.state.musicList[0]
-    }
-    
-
     audio.src = url
 
     console.log(audio);
     
 
-    
     setTimeout(()=>{
       store.state.current_music_now_time = 0
       let time = audio.duration
@@ -60,43 +65,45 @@ export function playMusic(store: any,isSingle=false,id:number) {  //需手动传
       store.state.isPlaying = true
       audio.play()
       auto_increment_nowTime(store)
-      if(isSingle){       
-        store.state.musicList.splice(store.state.musicList.length-1, 1)
-      }else{
-        store.state.musicList.splice(0, 1)
-      }
+      
       
       
       setInterval(()=>{
+        if(store.state.current_index==store.state.musicList.length-1){
+          console.log('qwe');
+          
+          return 0
+        }
         if(store.state.musicList.length>0&&store.state.current_music_now_time>=store.state.current_music_max_time){
-        
-        
-        
-          console.log(">>>");
+          store.state.current_index++
+          store.state.current_play_music= store.state.musicList[store.state.current_index]
+          getMusic(store.state.current_play_music).then(res => {
+            console.log(">>>");
    
-          audio.load()
-          console.log(store.state.musicList[0]);
-          let url: string = store.state.musicList[0]
-          audio.src = url
-          //等待audio对象加载
-          setTimeout(()=>{     
-            console.log(audio.duration);
-            store.state.current_music_now_time = 0
-            let time2 = audio.duration;  //获取歌曲播放时长
-            store.state.current_music_max_time = Math.floor(time)
-            store.state.isPlaying = true
-            audio.play()
-            auto_increment_nowTime(store)
-            store.state.musicList.splice(0, 1)
-            store.state.name_list.splice(0, 1)
-            store.state.artist_list.splice(0, 1)
-          },300)
+            audio.load()
+          
+            let url: string = res.data.data[0].url
+            audio.src = url
+            //等待audio对象加载
+            setTimeout(()=>{     
+              
+              store.state.current_music_now_time = 0
+              let time2 = audio.duration;  //获取歌曲播放时长
+              store.state.current_music_max_time = Math.floor(time)
+              store.state.isPlaying = true
+              audio.play()
+              auto_increment_nowTime(store)
+              
+    
+            },200)
            
+          })
+          
           
         
         
         
-      }
+        }
         
       },500)
       
@@ -109,11 +116,8 @@ export function playMusic(store: any,isSingle=false,id:number) {  //需手动传
 
 }
 export function afterPlay(store: any,id:number) {
-   return getMusic(id).then(res => {
-    
-    store.state.musicList.push(res.data.data[0].url)
-
-  })
+  store.state.musicList.push(id)
+  
 }
 export function changeNowTime(store:any){
   audio.currentTime = store.state.current_music_now_time

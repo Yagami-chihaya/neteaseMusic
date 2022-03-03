@@ -127,20 +127,22 @@ export default defineComponent({
       store.state.cover_list.push(item.al.picUrl)
       store.state.artist_list.push(item.ar[0].name)
       console.log(store.state.name_list);
-      afterPlay(store,item.id)
+      return afterPlay(store,item.id)
     }
     let hot_recommend_play = (id:number)=>{  //播放热门歌单
       store.state.musicList = [] //清空播放列表
+      store.state.current_index = 0  //重置歌单播放进度
       store.state.name_list = []
       store.state.cover_list = []
       store.state.artist_list = []
-      get_data().get('/playlist/track/all',{params:{id}}).then(res=>{
+      get_data().get('/playlist/track/all',{params:{id}}).then(async res=>{
+        
         for(let item of res.data.songs){
-          after_play(item)
+          await after_play(item)
         } 
-        playMusic(store,false,store.state.musicList[0])
+   
+        playMusic(store,false,store.state.musicList[0].id)
       })
-      console.log(store.state.musicList);
       
     }
 

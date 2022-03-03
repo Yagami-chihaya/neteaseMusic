@@ -401,6 +401,7 @@ export default defineComponent({
 
     let top_play = (data:any)=>{
       store.state.musicList = [] //清空播放列表
+      store.state.current_index = 0  //重置歌单播放进度
       store.state.name_list = []
       store.state.cover_list = []
       store.state.artist_list = []
@@ -414,6 +415,7 @@ export default defineComponent({
 
     let hot_recommend_play = (id:number)=>{  //播放热门歌单
       store.state.musicList = [] //清空播放列表
+      store.state.current_index = 0  //重置歌单播放进度
       store.state.name_list = []
       store.state.cover_list = []
       store.state.artist_list = []
@@ -423,13 +425,8 @@ export default defineComponent({
           await after_play(item)
         } 
 
-        // const queueJob = [Promise.resolve()]
-        // await Promise.all([after_play(item)]).then(res => store.state.musiclist.push(res))
-        console.log(store.state.musicList);
-        
-        console.log(store.state.musicList[0]);
-        
-        // playMusic(store,false,store.state.musicList[0].id)
+   
+        playMusic(store,false,store.state.musicList[0].id)
       })
    
       
