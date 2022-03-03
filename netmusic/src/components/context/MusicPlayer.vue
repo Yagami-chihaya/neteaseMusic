@@ -1,5 +1,5 @@
 <template>
-<div class="musicPlayer" >
+<div class="musicPlayer" @mouseenter="isDown=false" @mouseleave="isDown=true" :class="{down:isDown&&!isOpen}">
   <div class="leftMenu">
     <div class="btn prev"></div>
     <div class="btn play" @click="go_on_music(store)" v-if="!store.state.isPlaying"></div>
@@ -31,6 +31,11 @@
       <el-slider v-model="volume" vertical height="90px" size="small" @change="changeVoice"> </el-slider>
     </div>
     <div class="voice" @click="isShowVoiceBox=!isShowVoiceBox"></div>
+  </div>
+  <div class="open">
+    <div class="lock" @click="isOpen=!isOpen" :class="{unlock:!isOpen}">
+
+    </div>
   </div>
 </div>
 </template>
@@ -83,7 +88,7 @@ export default defineComponent({
       store.state.name_list.splice(0, 1)
       store.state.cover_list.splice(0, 1)
       store.state.artist_list.splice(0, 1)
-      playMusic(store)
+      playMusic(store,false,store.state.musicList[0])
     }
 
     let volume = ref(70)
@@ -94,6 +99,9 @@ export default defineComponent({
       change_voice(value)
     }
     let isShowVoiceBox = ref(false)
+
+    let isOpen = ref(true)
+    let isDown = ref(false)
     return {
       store,
       audio,
@@ -105,6 +113,8 @@ export default defineComponent({
       go_on_music,
       volume,
       isShowVoiceBox,
+      isOpen,
+      isDown,
     }
   },
   
@@ -115,7 +125,7 @@ export default defineComponent({
 <style lang="scss" scoped>
   .musicPlayer{
     position: fixed;
-    bottom: 0px;
+    bottom: -2px;
     left: 0;
     width: 100%;
     padding-top: 5px;
@@ -123,7 +133,7 @@ export default defineComponent({
     
     display: flex;
     justify-content: center;
-    
+    transition: 1s;
     background: url('../../assets/img/playbar.png');
     .leftMenu{
       height: 100%;
@@ -258,5 +268,39 @@ export default defineComponent({
         }
       }
     }
+    .open{
+      position: absolute;
+      background: url('https://s2.music.126.net/style/web2/img/frame/playbar.png?5cc1f16fa190a231e1da8514cb25fd95') 0 0 no-repeat;
+      top: -14px;
+      right: 15px;
+      width: 52px;
+      height: 67px;
+      background-position: 0 -380px;
+      .lock{
+        display: block;
+        width: 18px;
+        height: 18px;
+        margin: 6px 0 0 17px;
+        background: url('https://s2.music.126.net/style/web2/img/frame/playbar.png?5cc1f16fa190a231e1da8514cb25fd95') -100px -380px no-repeat;
+        cursor: pointer;
+        &:hover{
+          background-position: -100px -400px;
+        }
+        
+      }
+      .unlock{
+        display: block;
+        width: 18px;
+        height: 18px;
+        margin: 6px 0 0 17px;
+        background-position: -80px -380px;
+        &:hover{
+          background-position: -80px -400px;
+        }
+      }
+    }
+  }
+  .down{
+    transform: translateY(42px);
   }
 </style>

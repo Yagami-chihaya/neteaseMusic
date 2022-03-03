@@ -114,12 +114,12 @@ export default defineComponent({
     let store = useStore()
     
     let after_play = (item:any)=>{
-      store.state.current_play_music=item.id
+      
       store.state.name_list.push(item.name)
       store.state.cover_list.push(item.al.picUrl)
       store.state.artist_list.push(item.ar[0].name)
       console.log(store.state.name_list);
-      afterPlay(store)
+      afterPlay(store,item.id)
     }
 
     let DVD_play = (album_id:number)=>{
@@ -131,7 +131,7 @@ export default defineComponent({
         for(let item of res.data.songs){
           after_play(item)
         }
-        playMusic(store)
+        playMusic(store,false,store.state.musicList[0])
       })
       
     }

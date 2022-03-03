@@ -6,8 +6,8 @@ let audio = new Audio()
 
 let playList = []
 
-let getMusic = (store: any) => {
-  return get_data().get('/song/url', { params: { 'id': store.state.current_play_music } })
+let getMusic = (id:number) => {
+  return get_data().get('/song/url', { params: { 'id': id } })
 }
 let l:any;
 let auto_increment_nowTime = (store:any)=>{
@@ -26,17 +26,17 @@ let auto_increment_nowTime = (store:any)=>{
 
 
 
-export function playMusic(store: any,isSingle=false) {  //需手动传入store对象，ts文件无法单独使用vuex的api  isSingle判断是否单独播放歌曲
+export function playMusic(store: any,isSingle=false,id:number) {  //需手动传入store对象，ts文件无法单独使用vuex的api  isSingle判断是否单独播放歌曲
   
   audio.load()
 
-  getMusic(store).then(res => {             //为了防止以后看不懂，这段代码意思是先将要播放的歌曲url推进数组当中，播放数组最后一个元素并删除。然后判断数组长度是否大于0，若大于则从数组中第一个元素开始播放并删除。直到队列清空
+  getMusic(id).then(res => {             //这段代码意思是先将要播放的歌曲url推进数组当中，播放数组最后一个元素并删除。然后判断数组长度是否大于0，若大于则从数组中第一个元素开始播放并删除。直到队列清空
     
-    console.log(res.data);
+    
     
     store.state.musicList.push(res.data.data[0].url)
 
-    console.log(store.state.musicList);
+    
     let url: string
     if(isSingle){
       url = store.state.musicList[store.state.musicList.length-1]
@@ -108,8 +108,9 @@ export function playMusic(store: any,isSingle=false) {  //需手动传入store�
   })
 
 }
-export function afterPlay(store: any) {
-  getMusic(store).then(res => {
+export function afterPlay(store: any,id:number) {
+   return getMusic(id).then(res => {
+    
     store.state.musicList.push(res.data.data[0].url)
 
   })

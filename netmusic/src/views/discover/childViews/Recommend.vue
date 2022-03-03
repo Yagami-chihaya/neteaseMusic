@@ -242,7 +242,7 @@ import {
   ref ,
   onMounted,
 } from 'vue';
-import {useStore} from 'vuex'
+import { useStore } from 'vuex'
 import {get_data} from '../../../network/request'
 import {playMusic,afterPlay} from '../../../network/playMusic'
 import contentBox from '../../../components/context/ContentBox.vue'
@@ -263,12 +263,12 @@ export default defineComponent({
     let cookie = store.state.isLogin?localStorage.getItem('cookie'):''
 
     get_data().get('/homepage/block/page').then(res=>{
-      console.log(res.data.data.blocks[0].extInfo.banners);
+      
       cover_data.value = res.data.data.blocks[0].extInfo.banners;
-      console.log(cover_data);
+     
       
     }).catch(err=>{
-      console.log(err);
+      
       
     })
 
@@ -277,23 +277,24 @@ export default defineComponent({
     let hot_recommend = ref();
 
     get_data().get('/personalized',{params:{'limit':8,'cookie':cookie}}).then(res=>{
-      console.log(res.data.result);
+      
       hot_recommend.value = res.data.result
-      console.log(hot_recommend.value);
+      
       
     })
 
     let person_recommend = ref([]);
-    get_data().get('/recommend/resource',{params:{'cookie':localStorage.getItem('cookie')}}).then(res=>{
+    get_data().get('/recommend/resource',{params:{'cookie':cookie}}).then(res=>{
       
-      console.log(res.data);
+      
+      
       person_recommend.value = res.data.recommend
     })
 
     //获取最新碟片的数据
     let new_DVD_data = ref();
     get_data().get('/album/newest').then(res=>{
-      console.log(res.data);
+     
       new_DVD_data.value = res.data.albums
     })
 
@@ -307,7 +308,7 @@ export default defineComponent({
     let isMove = ref(false);  //是否移动，用于节流
 
     const move = (distance:number)=>{      //distance代表跳过几个item
-      console.log((dvdBox as HTMLElement).offsetWidth);
+      
       
       if(isMove.value) return 0;
       isMove.value = true;
@@ -315,7 +316,7 @@ export default defineComponent({
       
       
       left.value += -distance*130;
-      console.log(left.value);
+     
       (dvdBox as HTMLElement).style.transform = `translateX(${left.value}px)`
       setTimeout(()=>{
         isMove.value = false;
@@ -332,7 +333,7 @@ export default defineComponent({
       
     }
     const next = ()=>{
-      console.log((dvdBox as HTMLElement).offsetWidth-(new_DVD_data.value.length%5*130));
+     
       
       if(Math.abs(left.value)>=(dvdBox as HTMLElement).offsetWidth-(new_DVD_data.value.length%5*130)){
         left.value = 130*5
@@ -354,14 +355,14 @@ export default defineComponent({
           
             list_data.push(res.data.playlist.tracks[i])
           }
-          console.log(list_data);
+         
           top_data.value.push(list_data)
           
         })
          
       }
      
-      console.log(top_data.value);
+      
     })
 
     //获取歌手信息
@@ -379,22 +380,23 @@ export default defineComponent({
     let play = (item:any)=>{
       
       
-      store.state.current_play_music=item.id
+      
       store.state.name_list.unshift(item.name)
       store.state.cover_list.unshift(item.al.picUrl)
       store.state.artist_list.unshift(item.ar[0].name)
-      console.log(store.state.name_list);
+   
       
-      playMusic(store,true)
+      playMusic(store,true,item.id)
     }
 
     let after_play = (item:any)=>{
-      store.state.current_play_music=item.id
+      
       store.state.name_list.push(item.name)
       store.state.cover_list.push(item.al.picUrl)
       store.state.artist_list.push(item.ar[0].name)
-      console.log(store.state.name_list);
-      afterPlay(store)
+  
+      
+      return afterPlay(store,item.id)
     }
 
     let top_play = (data:any)=>{
@@ -406,7 +408,8 @@ export default defineComponent({
         after_play(item)
       }
       
-      playMusic(store)
+      
+      playMusic(store,false,store.state.musicList[0].id)
     }
 
     let hot_recommend_play = (id:number)=>{  //播放热门歌单
@@ -414,13 +417,21 @@ export default defineComponent({
       store.state.name_list = []
       store.state.cover_list = []
       store.state.artist_list = []
-      get_data().get('/playlist/track/all',{params:{id}}).then(res=>{
+      get_data().get('/playlist/track/all',{params:{id}}).then(async res=>{
+        
         for(let item of res.data.songs){
-          after_play(item)
+          await after_play(item)
         } 
-        playMusic(store)
+
+        // const queueJob = [Promise.resolve()]
+        // await Promise.all([after_play(item)]).then(res => store.state.musiclist.push(res))
+        console.log(store.state.musicList);
+        
+        console.log(store.state.musicList[0]);
+        
+        // playMusic(store,false,store.state.musicList[0].id)
       })
-      console.log(store.state.musicList);
+   
       
     }
 
@@ -433,11 +444,11 @@ export default defineComponent({
     let user_info = ref({})
     let level = ref()
     let isSign = ref()
-    get_data().get('/user/account',{params:{'cookie':localStorage.getItem('cookie')}}).then(res=>{
-      console.log(res.data);
-      console.log('user');
+    get_data().get('/user/account',{params:{'cookie':cookie}}).then(res=>{
+
+
       get_data().get('/user/detail',{params:{'uid':res.data.account.id}}).then(res=>{
-        console.log(res.data);
+
         user_info.value = res.data.profile
         level.value = res.data.level
         isSign.value = res.data.mobileSign||res.data.pcSign
@@ -447,8 +458,8 @@ export default defineComponent({
 
     
     let sign = ()=>{
-      get_data().get('/daily_signin',{params:{'cookie':localStorage.getItem('cookie')}}).then(res=>{
-        console.log(res.data);
+      get_data().get('/daily_signin',{params:{'cookie':cookie}}).then(res=>{
+
         if(res.data.code==200){
           ElMessage({
             message: '签到成功',

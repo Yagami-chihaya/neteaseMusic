@@ -69,5 +69,7 @@ export default defineComponent({
 </style>
 
 <style lang="scss">
-
+  #nav{
+    background: #f5f5f5;
+  }
 </style>

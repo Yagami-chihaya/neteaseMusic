@@ -167,22 +167,22 @@ export default defineComponent({
     let play = (item:any)=>{
       
       
-      store.state.current_play_music=item.id
+      
       store.state.name_list.unshift(item.name)
       store.state.cover_list.unshift(item.al.picUrl)
       store.state.artist_list.unshift(item.ar[0].name)
       console.log(store.state.name_list);
       
-      playMusic(store,true)
+      playMusic(store,true,item.id)
     }
 
     let after_play = (item:any)=>{
-      store.state.current_play_music=item.id
+      
       store.state.name_list.push(item.name)
       store.state.cover_list.push(item.al.picUrl)
       store.state.artist_list.push(item.ar[0].name)
       console.log(store.state.name_list);
-      afterPlay(store)
+      afterPlay(store,item.id)
     }
 
     let top_play = (data:any)=>{
@@ -194,7 +194,7 @@ export default defineComponent({
         after_play(item)
       }
       
-      playMusic(store)
+      playMusic(store,false,store.state.musicList[0])
     }
     
     return {
@@ -491,6 +491,11 @@ export default defineComponent({
                     padding-right: 5px;
                     margin-left: 10px;
                     background: url('https://s2.music.126.net/style/web2/img/table.png?bd6d570c50af0a1b1678514bd60e5496') 0 -103px no-repeat;
+                    max-width: 49%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+
                   }
                   .other_title{
                     color: #aeaeae;

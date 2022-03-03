@@ -1,5 +1,5 @@
 <template>
-<div class="navbar">
+<div class="navbar" :class="{isFixed:router.currentRoute.value.name=='Mine_music'}">
   <a class="logo" @click="to('recommend')"><img src="../../assets/img/logo.png"></a>
   <ul class="btn_list">
     
@@ -27,7 +27,7 @@ import {
   defineComponent, 
   reactive, 
   ref,
-  
+  onMounted,
 } from 'vue';
 import {useRouter} from 'vue-router'
 import {Search} from '@element-plus/icons-vue'
@@ -46,33 +46,39 @@ export default defineComponent({
     const btn_list = [
       {
         name:'发现音乐',
-        path:'discover'
+        path:'discover',
+        n:'Discover'
       },
       {
         name:'我的音乐',
-        path:'mine_music'
+        path:'mine_music',
+        n:'Mine_music'
       },
       {
         name:'关注',
-        path:'follow'
+        path:'follow',
+        n:'Follow'
       },
       {
         name:'商城',
-        url:'https://music.163.com/store/product'
+        url:'https://music.163.com/store/product',
+        n:''
       },
       {
         name:'音乐人',
-        url:'https://music.163.com/st/musician'
+        url:'https://music.163.com/st/musician',
+        n:''
       },
       {
         name:'下载客户端',
-        path:'download'
+        path:'download',
+        n:'Download'
       },
     ];
+    const router = useRouter();
     let input_text = ref('');
     let currentIndex = ref(0);
-    
-    const router = useRouter();
+
     const to = (url:string)=>{
       router.push(url)
     }
@@ -113,6 +119,7 @@ export default defineComponent({
       to,
       isShowUserBox,
       logout,
+      router,
     }
   },
   
@@ -122,7 +129,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
   .navbar{
-    
+    z-index: 10;
     display: flex;
     justify-content:center;
     align-items: center;
@@ -270,5 +277,9 @@ export default defineComponent({
     }
    
   }
-
+  .isFixed{
+    width: 100%;
+    position: fixed;
+    
+  }
 </style>

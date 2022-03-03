@@ -288,12 +288,12 @@ export default defineComponent({
       })
     }
     let after_play = (item:any)=>{
-      store.state.current_play_music=item.mainSong.id
+      
       store.state.name_list.push(item.mainSong.name)
       store.state.cover_list.push(item.mainSong.album.picUrl)
       store.state.artist_list.push(item.mainSong.artists[0].name)
       console.log(store.state.name_list);
-      afterPlay(store)
+      afterPlay(store,item.id)
     }
     let radio_play = (data:any)=>{
       
@@ -306,7 +306,7 @@ export default defineComponent({
         after_play(item)
       }
       
-      playMusic(store)
+      playMusic(store,false,store.state.musicList[0])
     }  
     let radio_recommend = ref({})
     radio_recommend.value= {djRadios:[]}  //防止使用slice导致报错
