@@ -4,7 +4,7 @@ export default createStore({
   state: {
     current_play_music:33894312,
     musicList:[],
-   
+    current_lyric:'',
     current_index:0,
     current_music_now_time:0,
     current_music_max_time:0,

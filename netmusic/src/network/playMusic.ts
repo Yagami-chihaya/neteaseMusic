@@ -47,7 +47,9 @@ export function playMusic(store: any,isSingle=false,id:number) {  //需手动传
   }
 
   getMusic(store.state.current_play_music).then(res => {             //这段代码意思是先将要播放的歌曲url推进数组当中，播放数组最后一个元素并删除。然后判断数组长度是否大于0，若大于则从数组中第一个元素开始播放并删除。直到队列清空
-    
+    get_data().get('lyric',{params:{'id':store.state.current_play_music}}).then(res=>{
+      store.state.current_lyric = res.data.lrc.lyric
+    })
     console.log(res.data.data[0]);
     
     let url: string = res.data.data[0].url
@@ -79,7 +81,9 @@ export function playMusic(store: any,isSingle=false,id:number) {  //需手动传
           store.state.current_play_music= store.state.musicList[store.state.current_index]
           getMusic(store.state.current_play_music).then(res => {
             console.log(">>>");
-   
+            get_data().get('lyric',{params:{'id':store.state.current_play_music}}).then(res=>{
+              store.state.current_lyric = res.data.lrc.lyric
+            })
             audio.load()
           
             let url: string = res.data.data[0].url
@@ -107,7 +111,7 @@ export function playMusic(store: any,isSingle=false,id:number) {  //需手动传
         
       },500)
       
-    },300)
+    },1000)
 
     
     

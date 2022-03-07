@@ -16,7 +16,7 @@
       </ul>
       <div class="list">
         <div class="item" v-for="(item,index) in songs_list" :key="index">
-          <span class="play"></span>
+          <span class="play" @click="play(item)"></span>
           <div class="t2">
             <span class="name">{{item.name}}</span>
             <span class="mv"></span>
@@ -24,11 +24,11 @@
           </div>
           
           <span class="artist">{{item.artists[0].name}}</span>
-          <span class="album">{{item.album.name}}</span>
+          <span class="album">《{{item.album.name}}》</span>
           <span class="time">{{Math.floor(item.duration/1000)/60>=10?Math.floor(Math.floor(item.duration/1000)/60):'0'+Math.floor(Math.floor(item.duration/1000)/60)}}:{{Math.floor(item.duration/1000)%60>=10?Math.floor(item.duration/1000)%60:'0'+Math.floor(item.duration/1000)%60}}</span>
         </div>
       </div>
-      <el-pagination background layout="prev, pager, next" :total="1000">
+      <el-pagination background layout="prev, pager, next" :total="songs_count" :page-size="30" @current-change="page_change">
       </el-pagination>
     </div>
   </div>
@@ -43,7 +43,7 @@ import {
 } from 'vue';
 import {get_data} from '../../network/request'
 import {useStore} from 'vuex'
-
+import {playMusic} from '../../network/playMusic'
 
 export default defineComponent({
   name: '',
@@ -102,19 +102,35 @@ export default defineComponent({
     let search_text = ref(store.state.input_text)
     let get_search_data = (type:number,keywords:string,limit:number,offset:number)=>{
       if(!keywords) return 0
-      get_data().get('/search',{params:{type,keywords,limit}}).then(res=>{
+      get_data().get('/search',{params:{type,keywords,limit,offset}}).then(res=>{
 
-        console.log(res.data.result);
+        console.log(res);
         songs_list.value = res.data.result.songs
         songs_count.value = res.data.result.songCount
       })
     }
     
-    get_search_data(active_type.value.type,search_text.value,300,30)
+    get_search_data(active_type.value.type,search_text.value,30,0)
     let change_type = (index:number)=>{
       active_index.value = index
     }
-    
+    let page_change = (page:any)=>{
+      console.log(page);
+      
+      get_search_data(active_type.value.type,search_text.value,30,(page-1)*30)
+    }
+    let play = (item:any)=>{
+      
+      
+      console.log(item);
+      
+      store.state.name_list.unshift(item.name)
+      // store.state.cover_list.unshift(item.al.picUrl||undefined)
+      store.state.artist_list.unshift(item.artists[0].name)
+   
+      
+      playMusic(store,true,item.id)
+    }
 
     return {
       store,
@@ -126,6 +142,8 @@ export default defineComponent({
       songs_count,
       get_search_data,
       search_text,
+      page_change,
+      play,
     }
   },
   
@@ -245,6 +263,7 @@ export default defineComponent({
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
+                vertical-align: middle;
               }
               .mv{
                 display: inline-block;
@@ -252,6 +271,7 @@ export default defineComponent({
                 width: 23px;
                 height: 17px;
                 padding-left: 5px;
+                vertical-align: middle;
               }
               .other{
                 color: #999;
@@ -263,10 +283,11 @@ export default defineComponent({
             }
             
             .artist{
-              
+              width: 200px;
             }
             .album{
               color: #666;
+              width: 200px;
             }
             
             &:nth-child(2n-2){
@@ -274,6 +295,13 @@ export default defineComponent({
               border-color: #f7f7f7;
             }
           }
+        }
+        .el-pagination{
+          text-align: center;
+          margin-left: 50%;
+          margin-top: 30px;
+          transform: translateX(-50%);
+          margin-bottom: 50px;
         }
       }
     }
