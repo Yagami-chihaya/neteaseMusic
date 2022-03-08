@@ -9,7 +9,7 @@
     </ul>
   </div>
   <div class="right">
-    <content-box :title="now_title" rightText="更多>">
+    <content-box :title="now_title" rightText="">
       <ul>
         <li v-for="(item,index) in artists_data" :key="index"> 
           <div class="cover">

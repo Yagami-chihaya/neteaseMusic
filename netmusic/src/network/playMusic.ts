@@ -42,7 +42,7 @@ export function playMusic(store: any,isSingle=false,id:number) {  //需手动传
     
     
   }else {
-    store.state.musicList.push(id)
+    // store.state.musicList.push(id)
     store.state.current_play_music= store.state.musicList[store.state.current_index]
   }
 
@@ -72,7 +72,7 @@ export function playMusic(store: any,isSingle=false,id:number) {  //需手动传
       
       setInterval(()=>{
         if(store.state.current_index==store.state.musicList.length-1){
-          console.log('qwe');
+          
           
           return 0
         }

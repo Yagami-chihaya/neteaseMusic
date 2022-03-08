@@ -20,7 +20,7 @@
  
     <div class="left">
       <div class="hot_recommend">
-        <content-box title="热门推荐" :titleImg="require('../../../assets/img/circle1.png')" :otherTitle="['华语','流行','摇滚','民谣','电子']" rightText="更多">
+        <content-box title="热门推荐" :titleImg="require('../../../assets/img/circle1.png')" url="musicList" :otherTitle="['华语','流行','摇滚','民谣','电子']" rightText="更多>">
           <div class="item" v-for="(item,index) in hot_recommend" :key="index">
             <div class="cover">
               <img class="coverImg" :src="item.picUrl">
@@ -37,7 +37,7 @@
         </content-box>
       </div>
       <div class="person_recommend" v-if="store.state.isLogin">
-        <content-box title="个性化推荐" :titleImg="require('../../../assets/img/circle1.png')" rightText="更多">
+        <content-box title="个性化推荐" :titleImg="require('../../../assets/img/circle1.png')" rightText="">
           <div class="item" v-for="(item,index) in person_recommend.slice(0,4)" :key="index">
             <div class="cover">
               <img class="coverImg" :src="item.picUrl">
@@ -54,7 +54,7 @@
         </content-box>
       </div>
       <div class="new_DVD">
-        <content-box title='新碟上架' :titleImg="require('../../../assets/img/circle1.png')" rightText="更多">
+        <content-box title='新碟上架' url="newDVD" :titleImg="require('../../../assets/img/circle1.png')" rightText="更多>">
           <div class="content">
             <div class="showBox">
               <div class="dvdBox" id="dvdBox">
@@ -77,7 +77,7 @@
         
       </div>
       <div class="topList">
-        <content-box title="榜单" :titleImg="require('../../../assets/img/circle1.png')" rightText="更多">
+        <content-box title="榜单" url="top" :titleImg="require('../../../assets/img/circle1.png')" rightText="更多>">
           <div class="content">
           <ul>
             <li>
@@ -261,7 +261,8 @@ export default defineComponent({
     //获取顶部轮播图封面数据
     let cover_data = ref();
     let cookie = store.state.isLogin?localStorage.getItem('cookie'):''
-
+    console.log('cookie:'+cookie);
+  
     get_data().get('/homepage/block/page').then(res=>{
       
       cover_data.value = res.data.data.blocks[0].extInfo.banners;

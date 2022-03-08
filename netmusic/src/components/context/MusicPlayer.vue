@@ -57,7 +57,7 @@
               <div class="col col2">{{item}}</div>
               <div class="col col3">
                 <div class="icon">
-                  <span :style="{backgroundPosition:'-51px 0'}"></span>
+                  <span @click="console.log('qwe')" :style="{backgroundPosition:'-51px 0'}"></span>
                   <span class="delete" :style="{backgroundPosition:'-57px -50px'}"></span>
                   <span :style="{backgroundPosition:'0px 0'}"></span>
                   <span :style="{backgroundPosition:'-24px 0'}"></span>
@@ -129,7 +129,9 @@ export default defineComponent({
     }
     
     let next = ()=>{         //下一首
-      if(store.state.current_index>store.state.musicList.length-1)return 0 
+      
+      
+      if(store.state.current_index>=store.state.musicList.length-1)return 0 
       store.state.current_index++
       playMusic(store,false,store.state.musicList[store.state.current_index])
     }
@@ -142,9 +144,7 @@ export default defineComponent({
 
     let volume = ref(70)    
     let changeVoice = (value:number)=>{         //更改音量
-      
-      console.log(value);
-      
+
       change_voice(value)
     }
     let isShowVoiceBox = ref(false)     //是否展示音量面板
@@ -173,7 +173,7 @@ export default defineComponent({
           
         }
         
-        console.log(lyricList.value);
+      
         
         
       }
@@ -199,7 +199,7 @@ export default defineComponent({
 
       }
       if(store.state.current_music_now_time==0){  //若当前播放时长为0，还原滚动条偏移量
-        console.log('清空');
+  
         
         lyricList.value = []
         scrollbarRef.value.setScrollTop(-64)

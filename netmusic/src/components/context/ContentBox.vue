@@ -4,7 +4,7 @@
       
       <p><img :src="titleImg" v-if="titleImg!=''">{{title}}</p>
       <span v-for="item in otherTitle" :key="item">{{item}}</span>
-      <span class="more">{{rightText}}</span>
+      <span class="more" @click="go(url)">{{rightText}}</span>
     </div>
     <div class="content">
       <slot></slot>
@@ -14,7 +14,8 @@
 
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
-
+import {useRouter} from 'vue-router'
+import {useStore} from 'vuex'
 export default defineComponent({
   name: "",
   components: {},
@@ -34,11 +35,24 @@ export default defineComponent({
     rightText:{
       type:String,
       default:[],
+    },
+    url:{
+      type:String,
+      default:''
     }
   },
 
   setup() {
-    return {};
+    const router = useRouter()
+    const store = useStore()
+    const go = (url:string)=>{
+      store.state.current_route = url
+      router.push(url)
+      console.log(store.state.current_route);
+      
+    }
+
+    return {go};
   },
 });
 </script>
@@ -80,6 +94,10 @@ export default defineComponent({
     position: absolute;
     right: 0;
     border: none;
+    cursor: pointer;
+    &:hover{
+      text-decoration: underline;
+    }
   }
 }
 .content {

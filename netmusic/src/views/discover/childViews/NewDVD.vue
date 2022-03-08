@@ -1,7 +1,7 @@
 <template>
 <div class="newDVD">
   <div class="content">
-    <content-box title="热门新碟" rightText="更多>">
+    <content-box title="热门新碟" rightText="">
       <ul>
         <li v-for="(item,index) in hot_newDVD" :key="index">
           <div class="cover">
@@ -14,7 +14,7 @@
         </li>
       </ul>
     </content-box>
-    <content-box class="all_newDVD" title="全部新碟" rightText="更多>">
+    <content-box class="all_newDVD" title="全部新碟" rightText="">
       <div class="category"><span v-for="(item,index) in area" :key="index" @click="change_category(item.n)">{{item.name}}<span class="line">|</span></span></div>
       <ul>
         <li v-for="(item,index) in all_newDVD" :key="index">

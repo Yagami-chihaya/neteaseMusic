@@ -2,7 +2,7 @@
   <div class="discover">
     <div class="navbar">
       <ul>
-        <li v-for="(item,index) in navbar_list" :key="index" @click="navbar_click(index)" :class="{active:index==current_index}">{{item.name}}</li>
+        <li v-for="(item,index) in navbar_list" :key="index" @click="navbar_click(index)" :class="{active:navbar_list[index].path==store.state.current_route}">{{item.name}}</li>
       </ul>
     </div>
     <router-view></router-view>
@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, Ref } from "vue";
-
+import {useStore} from 'vuex'
 import {useRouter} from 'vue-router'
 
 export default defineComponent({
@@ -20,6 +20,7 @@ export default defineComponent({
 
   },
   setup() {
+    const store = useStore()
     const navbar_list = [
       {
         name:'推荐',
@@ -31,7 +32,7 @@ export default defineComponent({
       },
       {
         name:'歌单',
-        path:'musiclist'
+        path:'musicList'
       },
       {
         name:'主播电台',
@@ -43,7 +44,7 @@ export default defineComponent({
       },
       {
         name:'新碟上架',
-        path:'newdvd'
+        path:'newDVD'
       },
     ];
     let current_index = ref(0);
@@ -51,7 +52,9 @@ export default defineComponent({
     const navbar_click =(index:number)=>{
  
       if(navbar_list[index].path){
-        current_index.value = index;
+        console.log(navbar_list[index].path);
+        
+        store.state.current_route = navbar_list[index].path;
         router.push(navbar_list[index].path)
       }
       
@@ -60,6 +63,7 @@ export default defineComponent({
     }
     const router = useRouter();
     return { 
+      store,
       navbar_list,
       current_index,
       navbar_click,
