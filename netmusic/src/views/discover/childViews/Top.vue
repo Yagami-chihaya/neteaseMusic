@@ -123,12 +123,12 @@ export default defineComponent({
   },
   
   setup(){
-    let top_list = ref([] as any[]) 
-    let list_part1 = ref()
-    let list_part2 = ref()
-    let now_top = ref({})
-    let updateFrequency = ref()
-    let tracks = ref([])
+    let top_list:any  = ref([] as any[]) 
+    let list_part1:any  = ref()
+    let list_part2:any  = ref()
+    let now_top:any  = ref({})
+    let updateFrequency:any  = ref()
+    let tracks:any  = ref([])
     get_data().get('/toplist').then(res=>{
      
       top_list.value = res.data.list
@@ -150,7 +150,7 @@ export default defineComponent({
       
       
     })
-    let active_top = ref(0)
+    let active_top:any  = ref(0)
     let change_top = (index:any)=>{
       get_data().get('/playlist/detail',{params:{'id':top_list.value[index].id}}).then(res=>{
         now_top.value =  res.data.playlist

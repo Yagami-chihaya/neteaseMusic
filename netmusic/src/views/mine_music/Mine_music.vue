@@ -199,14 +199,14 @@ export default defineComponent({
         url:'/user/playlist'
       },
     ]
-    let active_title = ref()
+    let active_title:any  = ref()
     let change_title = (name:string)=>{
       active_title.value = name
     }
-    let active_index = ref(0)
-    let current_musicList_info = ref({})
-    let current_musicList = ref([])
-    let current_musicList_creactor = ref({})
+    let active_index:any  = ref(0)
+    let current_musicList_info:any  = ref({})
+    let current_musicList:any  = ref([])
+    let current_musicList_creactor:any  = ref({})
     let change_index = (index:number,id:number)=>{
       change_title('')
       active_index.value = index
@@ -221,7 +221,7 @@ export default defineComponent({
       })
     }
     
-    let singer_info = ref([])
+    let singer_info:any  = ref([])
     get_data().get('/artist/sublist',{params:{
       'cookie':cookie,
       'uid':id
@@ -230,7 +230,7 @@ export default defineComponent({
       singer_info.value = res.data.data
     })
 
-    let radio_info = ref([])
+    let radio_info:any  = ref([])
     get_data().get('/dj/sublist',{params:{
       'cookie':cookie,
       

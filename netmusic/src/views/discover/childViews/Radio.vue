@@ -245,16 +245,16 @@ export default defineComponent({
 
 
     ]
-    let active_category = ref()
+    let active_category:any = ref()
     let change_category = (index:Number)=>{
       active_category.value = index
     }
-    let recommend_program = ref()
+    let recommend_program:any  = ref()
     get_data().get('/program/recommend',{params:{'limit':10}}).then(res=>{
       console.log(res.data);
       recommend_program.value = res.data.programs
     })
-    let top_program = ref([])
+    let top_program:any  = ref([])
     get_data().get('/dj/program/toplist',{params:{'limit':10}}).then(res=>{
       console.log(res.data);
       top_program.value = res.data.toplist
@@ -297,15 +297,15 @@ export default defineComponent({
 
       playMusic(store,false,store.state.musicList[0].id)
     }  
-    let radio_recommend = ref({})
+    let radio_recommend:any  = ref({})
     radio_recommend.value= {djRadios:[]}  //防止使用slice导致报错
-    let radio_life = ref({})
+    let radio_life:any  = ref({})
     radio_life.value= {djRadios:[]}
-    let radio_emotion = ref({})
+    let radio_emotion:any  = ref({})
     radio_emotion.value= {djRadios:[]}
-    let radio_fanchang = ref({})
+    let radio_fanchang:any  = ref({})
     radio_fanchang.value= {djRadios:[]}
-    let radio_knowledge = ref({})
+    let radio_knowledge:any  = ref({})
     radio_knowledge.value= {djRadios:[]}
     let get_radio_info = (type:Number,obj={value:{}})=>{
       get_data().get('/dj/recommend/type',{params:{

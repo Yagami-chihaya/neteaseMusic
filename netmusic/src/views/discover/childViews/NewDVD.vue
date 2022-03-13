@@ -55,11 +55,11 @@ export default defineComponent({
   },
   
   setup(){
-    let hot_newDVD = ref([])
-    let all_newDVD = ref([])
-    let total = ref(0)
-    let current_page = ref(0)
-    let current_area = ref('')
+    let hot_newDVD:any = ref([])
+    let all_newDVD:any = ref([])
+    let total:any = ref(0)
+    let current_page:any = ref(0)
+    let current_area:any = ref('')
     let area = [
       {
         name:'全部',

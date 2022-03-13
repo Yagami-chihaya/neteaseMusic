@@ -16,10 +16,7 @@ import {
 
 export default defineComponent({
   name: '',
-  components:{  },
-  props: {
-  },
-  
+ 
   setup(){
 
     const backTop = () =>{

@@ -48,6 +48,7 @@ export function login(phone:Number,captcha:Number|undefined,password:String|unde
       'phone':phone,
       'captcha':captcha
     }}).then(res=>{
+      localStorage.setItem('cookie',res.data.cookie)
       store.state.cookie = res.data.cookie
       console.log(res.data);
       ElMessage({

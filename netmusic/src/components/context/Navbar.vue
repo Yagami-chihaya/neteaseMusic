@@ -5,7 +5,7 @@
     
     <li v-for="(item,index) in btn_list" :key="index" :class="{active:currentIndex==index}" @click='btn_click(index)'><a :href="item.url">{{item.name}}</a></li>
   </ul>
-  <el-input v-model='store.state.input_text'  placeholder='音乐/视频/电台/用户' :prefix-icon='Search' @change="to('search_page')"></el-input>
+  <el-input v-model='store.state.input_text'  placeholder='音乐/视频/电台/用户' :prefix-icon='Search' @change="to('search_page')" type="text"></el-input>
   <div class="creater_center" @click="store.state.isLogin?to2('https://music.163.com/#/creatorcenter?module=creatorcenter'):store.state.isShowLoginBox=true">创作者中心</div>
   <div class="login" @click="store.state.isShowLoginBox=true" v-if="!store.state.isLogin">登录</div>
   <div class="avatar" v-else>
@@ -35,11 +35,9 @@ import {useStore} from 'vuex'
 import { get_data } from '../../network/request';
 import { ElMessage } from 'element-plus'
 
+
 export default defineComponent({
   name: '',
-  components:{  },
-  props: {
-  },
   
   setup(){
 
@@ -166,6 +164,7 @@ export default defineComponent({
           height: 5rem;
           line-height: 5rem;
           text-decoration: none;
+          color: #ccc;
           &:visited{
             color: #ccc;
           }

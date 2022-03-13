@@ -29,8 +29,8 @@ export default defineComponent({
       default:''
     },
     otherTitle:{
-      type:Array,
-      default:[],
+      
+      
     },
     rightText:{
       type:String,

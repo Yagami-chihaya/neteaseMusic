@@ -28,7 +28,7 @@ export default defineComponent({
     loginBox,
   },
   setup(){
-    let back_top_show = ref(false)
+    let back_top_show:any  = ref(false)
     const scrollMove = () =>{
       console.log(document.documentElement.scrollTop);
       back_top_show.value = document.documentElement.scrollTop>500

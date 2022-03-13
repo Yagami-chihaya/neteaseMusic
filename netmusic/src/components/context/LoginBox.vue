@@ -50,8 +50,8 @@
         <div class="login" @click="login2">登录</div>
       </div>
       <div class="bottom">
-        <span class="left" @click="page=1">&lt 其他登录方式</span>
-        <span class="right" @click="page=4">没有账号? 免费注册 &gt</span>
+        <span class="left" @click="page=1">&lt; 其他登录方式</span>
+        <span class="right" @click="page=4">没有账号? 免费注册 &gt;</span>
       </div>
     </div>
     <div id="page3" v-show="page==3">
@@ -81,7 +81,7 @@
         <div class="register" @click="send_captcha();page=5">下一步</div>
       </div>
       <div class="bottom">
-        <span class="left" @click="page=1">&lt 返回登录</span>
+        <span class="left" @click="page=1">&lt; 返回登录</span>
         
       </div>
     </div>
@@ -107,18 +107,15 @@ import {get_captcha,login,register} from '../../network/login'
 
 export default defineComponent({
   name: "",
-  components: {},
-  props: {},
-
   setup() {
     let store = useStore();
-    let page = ref(1)
+    let page:any  = ref(1)
     let close = () => {
       store.state.isShowLoginBox = false;
       page.value = 1
     };
-    let phone = ref()
-    let isShowPhoneWarning = ref(false)
+    let phone:any  = ref()
+    let isShowPhoneWarning:any  = ref(false)
     let send_captcha = ()=>{
       let reg_phone = /^1(3\d|4[5-9]|5[0-35-9]|6[567]|7[0-8]|8\d|9[0-35-9])\d{8}$/
 
@@ -132,7 +129,7 @@ export default defineComponent({
       }
       
     }
-    let captcha = ref()
+    let captcha:any  = ref()
 
     let login2 = ()=>{
       login(phone.value,captcha.value,password.value,store)
@@ -140,8 +137,8 @@ export default defineComponent({
       store.state.isShowLoginBox = false;
     }
 
-    let password = ref()
-    let nickname = ref()
+    let password:any  = ref()
+    let nickname:any  = ref()
     return {
       store,
       close,

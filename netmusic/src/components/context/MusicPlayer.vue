@@ -44,7 +44,7 @@
       <a href="javascript:;" class="collect_all"><span></span>收藏全部</a>
       <a href="javascript:;" class="clear" @click="clearAll"><span></span>清除</a>
       <p class="song_title">{{store.state.name_list[store.state.current_index]}}</p>
-      <span class="close"></span>
+      <span class="close" @click="closeListBox"></span>
     </div>
     <div class="list">
       <img :src="store.state.cover_list.length===0?require('../../assets/img/default_album.jpg'):store.state.cover_list[store.state.current_index]">
@@ -100,15 +100,13 @@ import {playMusic,changeNowTime,stopMusic,go_on_music,change_voice} from '../../
 export default defineComponent({
   name: '',
   components:{  },
-  props: {
-  },
   
   setup(){
 
     let store = useStore()
     let reg = /\[(.+)\./
 
-    let audio = ref<HTMLAudioElement|null>(null)       
+    let audio:any  = ref<HTMLAudioElement|null>(null)       
 
     let change = ()=>{              //改变播放进度条并播放对应当前时长
       changeNowTime(store)
@@ -142,15 +140,16 @@ export default defineComponent({
       playMusic(store,false,store.state.musicList[store.state.current_index])
     }
 
-    let volume = ref(70)    
-    let changeVoice = (value:number)=>{         //更改音量
+    let volume:any  = ref(70)    
+    let changeVoice = (value:any)=>{         //更改音量
 
       change_voice(value)
+      
     }
-    let isShowVoiceBox = ref(false)     //是否展示音量面板
-    let isShowListBox = ref(false)
-    let isOpen = ref(true)      //是否持续展开播放菜单
-    let isDown = ref(false)     //是否下降播放菜单
+    let isShowVoiceBox:any  = ref(false)     //是否展示音量面板
+    let isShowListBox:any  = ref(false)
+    let isOpen:any  = ref(true)      //是否持续展开播放菜单
+    let isDown:any  = ref(false)     //是否下降播放菜单
 
     const scrollbarRef = ref<any>()    //滚动盒子对象
 
@@ -207,7 +206,9 @@ export default defineComponent({
       } 
       requestAnimationFrame(changeScroll)        //递归
     }
-    
+    const closeListBox = ()=>{
+      isShowListBox.value = false
+    }
 
     onMounted(()=>{
       requestAnimationFrame(changeScroll)
@@ -235,7 +236,7 @@ export default defineComponent({
       isDown,
       reg,
       timeStack,
-
+      closeListBox,
       scrollbarRef,
       changeScroll,
     }

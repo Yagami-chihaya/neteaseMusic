@@ -6,7 +6,7 @@
       <div class="search_box">
         <input type="text" v-model="search_text">
  
-        <a class="search_icon" @click="get_search_data(active_type.type,search_text)"></a>
+        <a class="search_icon" @click="get_search_data(active_type.type,search_text,30,0)"></a>
       </div>
       <div class="little_info">
         搜索"{{search_text}}",找到 <span class="count">{{songs_count}}</span> {{active_type.s}}{{active_type.name}}
@@ -95,11 +95,11 @@ export default defineComponent({
         type:10000000,
       },
     ]
-    let active_type = ref(type_list[0])
-    let active_index = ref(0)
-    let songs_list = ref([])
-    let songs_count = ref(0)
-    let search_text = ref(store.state.input_text)
+    let active_type:any  = ref(type_list[0])
+    let active_index:any  = ref(0)
+    let songs_list:any  = ref([])
+    let songs_count:any  = ref(0)
+    let search_text:any  = ref(store.state.input_text)
     let get_search_data = (type:number,keywords:string,limit:number,offset:number)=>{
       if(!keywords) return 0
       get_data().get('/search',{params:{type,keywords,limit,offset}}).then(res=>{

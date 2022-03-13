@@ -259,7 +259,7 @@ export default defineComponent({
   setup(){
     let store = useStore();
     //获取顶部轮播图封面数据
-    let cover_data = ref();
+    let cover_data:any  = ref();
     let cookie = store.state.isLogin?localStorage.getItem('cookie'):''
     console.log('cookie:'+cookie);
   
@@ -275,7 +275,7 @@ export default defineComponent({
 
 
     //获取热门推荐数据
-    let hot_recommend = ref();
+    let hot_recommend:any  = ref();
 
     get_data().get('/personalized',{params:{'limit':8,'cookie':cookie}}).then(res=>{
       
@@ -284,7 +284,7 @@ export default defineComponent({
       
     })
 
-    let person_recommend = ref([]);
+    let person_recommend:any  = ref([]);
     get_data().get('/recommend/resource',{params:{'cookie':cookie}}).then(res=>{
       
       
@@ -293,7 +293,7 @@ export default defineComponent({
     })
 
     //获取最新碟片的数据
-    let new_DVD_data = ref();
+    let new_DVD_data:any  = ref();
     get_data().get('/album/newest').then(res=>{
      
       new_DVD_data.value = res.data.albums
@@ -305,8 +305,8 @@ export default defineComponent({
       dvdBox = document.getElementById('dvdBox')
     })
     
-    let left = ref(0);         //dvdBox偏移量
-    let isMove = ref(false);  //是否移动，用于节流
+    let left:any  = ref(0);         //dvdBox偏移量
+    let isMove:any  = ref(false);  //是否移动，用于节流
 
     const move = (distance:number)=>{      //distance代表跳过几个item
       
@@ -439,9 +439,9 @@ export default defineComponent({
       router.push(url)
     }
 
-    let user_info = ref({})
-    let level = ref()
-    let isSign = ref()
+    let user_info:any  = ref({})
+    let level:any  = ref()
+    let isSign:any  = ref()
     get_data().get('/user/account',{params:{'cookie':cookie}}).then(res=>{
 
 
@@ -1070,7 +1070,15 @@ export default defineComponent({
           color: #666;
           float: right;
         }
+        
       }
+      a{
+        color: #333;
+         &:visited{
+          color: #333;
+        }
+      }
+     
       .singer_list{
         
         .item{

@@ -75,4 +75,4 @@ const router = createRouter({
   routes
 })
 
-export default router
+export default router  //暴露router对象

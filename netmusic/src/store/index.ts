@@ -1,11 +1,12 @@
 import { createStore } from 'vuex'
-import {useRouter} from 'vue-router'
 
-const router = useRouter()
+
+import router from '../router'
+
 
 export default createStore({
   state: {
-    current_route:router.currentRoute.value,              //当前路由 
+    current_route: router.currentRoute.value,              //当前路由 
     current_play_music:33894312,   //当前播放歌曲id
     musicList:[],                  //播放id队列
     current_lyric:'',              //当前播放歌曲歌词
@@ -16,7 +17,7 @@ export default createStore({
     name_list:[],                 //播放歌名队列
     artist_list:[],               //播放歌手队列
     cover_list:[],                //播放封面队列
-    input_text:'',                 //搜索框输入内容
+    input_text:'yoasobi',                 //搜索框输入内容
     isShowLoginBox:false,       //显示登录界面
     isPlaying:false,            //是否正在播放
     isLogin:false,              //用户是否登录
