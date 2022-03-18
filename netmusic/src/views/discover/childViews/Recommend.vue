@@ -285,6 +285,7 @@ export default defineComponent({
       picUrl:string,
       name:string
     }
+
     
 
     let store = useStore();
@@ -474,15 +475,17 @@ export default defineComponent({
       router.push(url)
     }
 
-    let user_info:any  = ref({})
-    let level:any  = ref()
-    let isSign:any  = ref()
+    let user_info = ref<any>({})
+    
+    let level  = ref<number>()
+    let isSign  = ref<boolean>()
     get_data().get('/user/account',{params:{'cookie':cookie}}).then(res=>{
 
 
       get_data().get('/user/detail',{params:{'uid':res.data.account.id}}).then(res=>{
-
-        user_info.value = res.data.profile
+        console.log(res.data.profile);
+        
+        user_info.value= res.data.profile
         level.value = res.data.level
         isSign.value = res.data.mobileSign||res.data.pcSign
       })

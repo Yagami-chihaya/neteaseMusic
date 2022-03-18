@@ -143,6 +143,32 @@ export default defineComponent({
   },
   
   setup(){
+    interface RecommendProgram{
+      
+      coverUrl:string,
+      name:string,
+      radio:{
+        id:number,
+        name:string,
+        category:string
+      }
+    }
+    interface TopProgram{
+      program:{
+        radio:{
+          id:number,
+          name:string,
+          category:string,
+        },
+        coverUrl:string,
+        name:string,
+      },
+      rank:number,
+      lastRank:number,
+
+    }
+
+    
     let category_list = [
       {
         url:'https://p3.music.126.net/icULXvfqWJMFvcjTrXSLeA==/109951165406422565.jpg',
@@ -245,16 +271,18 @@ export default defineComponent({
 
 
     ]
-    let active_category:any = ref()
-    let change_category = (index:Number)=>{
+    let active_category= ref<number>()
+    let change_category = (index:number)=>{
+      
+      
       active_category.value = index
     }
-    let recommend_program:any  = ref()
+    let recommend_program = ref<Array<RecommendProgram>>()
     get_data().get('/program/recommend',{params:{'limit':10}}).then(res=>{
       console.log(res.data);
       recommend_program.value = res.data.programs
     })
-    let top_program:any  = ref([])
+    let top_program  = ref<Array<TopProgram>>([])
     get_data().get('/dj/program/toplist',{params:{'limit':10}}).then(res=>{
       console.log(res.data);
       top_program.value = res.data.toplist
@@ -297,7 +325,7 @@ export default defineComponent({
 
       playMusic(store,false,store.state.musicList[0].id)
     }  
-    let radio_recommend:any  = ref({})
+    let radio_recommend  = ref<any>({})
     radio_recommend.value= {djRadios:[]}  //防止使用slice导致报错
     let radio_life:any  = ref({})
     radio_life.value= {djRadios:[]}
@@ -307,7 +335,7 @@ export default defineComponent({
     radio_fanchang.value= {djRadios:[]}
     let radio_knowledge:any  = ref({})
     radio_knowledge.value= {djRadios:[]}
-    let get_radio_info = (type:Number,obj={value:{}})=>{
+    let get_radio_info = (type:number,obj={value:{}})=>{
       get_data().get('/dj/recommend/type',{params:{
         'type':type
       }}).then(res=>{
@@ -529,7 +557,7 @@ export default defineComponent({
             padding: 20px 0;
             border-bottom: 1px solid #e7e7e7;
             display: flex;
-            justify-content: start;
+            justify-content: flex-start;
             img{
               width: 120px;
             }
