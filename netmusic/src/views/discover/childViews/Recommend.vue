@@ -257,13 +257,45 @@ export default defineComponent({
   },
   
   setup(){
+
+    interface CoverData{
+      pic:string,
+    }
+    interface HotRecommend{
+      picUrl:string,
+      playCount:number,
+      id:number,
+      name:string
+    }
+    interface PersonRecommend{
+      picUrl:string,
+      playcount:number,
+      id:number,
+      name:string
+    }
+    interface NewDVD{
+      blurPicUrl:string,
+      name:string,
+      artist:{
+        name:string
+      },
+      length:number,
+    }
+    interface SingerData{
+      picUrl:string,
+      name:string
+    }
+    
+
     let store = useStore();
     //获取顶部轮播图封面数据
-    let cover_data:any  = ref();
+    let cover_data = ref<Array<CoverData>>();
     let cookie = store.state.isLogin?localStorage.getItem('cookie'):''
     console.log('cookie:'+cookie);
   
     get_data().get('/homepage/block/page').then(res=>{
+      
+      
       
       cover_data.value = res.data.data.blocks[0].extInfo.banners;
      
@@ -275,7 +307,7 @@ export default defineComponent({
 
 
     //获取热门推荐数据
-    let hot_recommend:any  = ref();
+    let hot_recommend = ref<Array<HotRecommend>>();
 
     get_data().get('/personalized',{params:{'limit':8,'cookie':cookie}}).then(res=>{
       
@@ -284,17 +316,19 @@ export default defineComponent({
       
     })
 
-    let person_recommend:any  = ref([]);
+    let person_recommend= ref<Array<PersonRecommend>>([]);
     get_data().get('/recommend/resource',{params:{'cookie':cookie}}).then(res=>{
       
+
       
       
       person_recommend.value = res.data.recommend
     })
 
     //获取最新碟片的数据
-    let new_DVD_data:any  = ref();
+    let new_DVD_data = ref<Array<NewDVD>>();
     get_data().get('/album/newest').then(res=>{
+
      
       new_DVD_data.value = res.data.albums
     })
@@ -305,8 +339,8 @@ export default defineComponent({
       dvdBox = document.getElementById('dvdBox')
     })
     
-    let left:any  = ref(0);         //dvdBox偏移量
-    let isMove:any  = ref(false);  //是否移动，用于节流
+    let left = ref<number>(0);         //dvdBox偏移量
+    let isMove  = ref<boolean>(false);  //是否移动，用于节流
 
     const move = (distance:number)=>{      //distance代表跳过几个item
       
@@ -336,7 +370,7 @@ export default defineComponent({
     const next = ()=>{
      
       
-      if(Math.abs(left.value)>=(dvdBox as HTMLElement).offsetWidth-(new_DVD_data.value.length%5*130)){
+      if(Math.abs(left.value)>=(dvdBox as HTMLElement).offsetWidth-((new_DVD_data.value as NewDVD[]).length%5*130)){
         left.value = 130*5
       }
       move(5)
@@ -345,7 +379,7 @@ export default defineComponent({
 
     //获取榜单数据
    
-    let top_data:any = ref([])
+    let top_data = ref<Array<Object>>([])
 
     get_data().get('/toplist').then(res=>{
       for(let index=0;index<3;index++){
@@ -367,7 +401,7 @@ export default defineComponent({
     })
 
     //获取歌手信息
-    let singer_data:any = ref([])
+    let singer_data = ref<Array<SingerData>>([])
     get_data().get('/top/artists',{params:{'limit':5}}).then(res=>{
       
       singer_data.value = res.data.artists
@@ -388,6 +422,7 @@ export default defineComponent({
    
       
       playMusic(store,true,item.id)
+      return item
     }
 
     let after_play = (item:any)=>{
